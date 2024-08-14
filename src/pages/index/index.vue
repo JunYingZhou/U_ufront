@@ -50,7 +50,7 @@ onLoad(() => {
 
 const goToLogin = () => {
   uni.navigateTo({
-    url: '/pages/login/index'
+    url: '/pages/charging/index'
   })
 }
 

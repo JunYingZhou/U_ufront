@@ -21,6 +21,12 @@
 			}
 		},
 		{
+			"path": "pages/charging/index",
+			"style": {
+				"navigationBarTitleText": "充电页面"
+			}
+		},
+		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "登录页"
