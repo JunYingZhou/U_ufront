@@ -1,15 +1,59 @@
+<!--
+ * @Author: zjy 3497577844@qq.com
+ * @Date: 2024-08-14 00:19:54
+ * @LastEditors: zjy 3497577844@qq.com
+ * @LastEditTime: 2024-08-14 02:37:50
+ * @FilePath: \uni-preset-vue\src\pages\index\index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
-  <view class="content">
+  <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
     <image class="logo" src="/static/logo.png" />
     <view class="text-area">
       <text class="title">{{ title }}</text>
     </view>
+    <button class="navigate-button" @click="goToLogin">Go to Login</button>
   </view>
 </template>
 
 <script setup lang="ts">
+import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue'
-const title = ref('Hello')
+import {useUserStore} from "@/stores";
+// import { useRouter } from 'vue-router'
+const title = ref('Hello,lyy')
+
+// const router = useRouter()
+
+// 获取屏幕边界到安全区域距离
+const { safeAreaInsets } = uni.getSystemInfoSync()
+
+onLoad(() => {
+
+  // 进行路由拦截
+  const userStore = useUserStore();
+  // 判断是否登录
+  if (!userStore.isLogin) {
+    // 未登录，跳转到登录页面
+    console.log("未登录")
+    uni.showToast({
+      icon: 'none',
+      title: '请先登录',
+    });
+    uni.redirectTo({ url: "/pages/login/index" });
+  }
+  uni.showToast({
+    icon: 'none',
+    title: '欢迎来到Wisson充电机器人',
+  });
+})
+
+const goToLogin = () => {
+  uni.navigateTo({
+    url: '/pages/login/index'
+  })
+}
+
 </script>
 
 <style>
