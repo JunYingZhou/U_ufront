@@ -2,24 +2,28 @@
  * @Author: zjy 3497577844@qq.com
  * @Date: 2024-08-14 00:19:54
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-08-14 02:37:50
+ * @LastEditTime: 2024-08-17 16:27:24
  * @FilePath: \uni-preset-vue\src\pages\index\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
+
+  <CustomNavbar></CustomNavbar>
+
   <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
     <image class="logo" src="/static/logo.png" />
     <view class="text-area">
       <text class="title">{{ title }}</text>
     </view>
-    <button class="navigate-button" @click="goToLogin">Go to Login</button>
+    <button class="navigate-button" @click="goToLogin">Go to charging</button>
   </view>
 </template>
 
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue'
-import {useUserStore} from "@/stores";
+import { useUserStore } from "@/stores";
+import CustomNavbar from './compoents/CustomNavbar.vue';
 // import { useRouter } from 'vue-router'
 const title = ref('Hello,lyy')
 
@@ -32,6 +36,8 @@ onLoad(() => {
 
   // 进行路由拦截
   const userStore = useUserStore();
+
+  console.log(userStore.isLogin);
   // 判断是否登录
   if (!userStore.isLogin) {
     // 未登录，跳转到登录页面
@@ -49,8 +55,8 @@ onLoad(() => {
 })
 
 const goToLogin = () => {
-  uni.navigateTo({
-    url: '/pages/charging/index'
+  uni.switchTab({
+    url: '/pages/my/index'
   })
 }
 
