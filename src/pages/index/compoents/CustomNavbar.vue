@@ -7,11 +7,6 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 
 <template>
   <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
-    <!-- logo文字 -->
-    <!-- <view class="logo">
-      <image class="logo-image" src="@/static/images/logo.png"></image>
-      <text class="logo-text">新鲜 · 亲民 · 快捷</text>
-    </view> -->
 
 
     <view class="logo1">
