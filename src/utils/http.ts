@@ -2,7 +2,7 @@
  * @Author: zjy 3497577844@qq.com
  * @Date: 2024-08-15 02:07:10
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-08-17 15:54:10
+ * @LastEditTime: 2024-08-18 13:35:38
  * @FilePath: \uni-preset-vue\src\utils\http.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -20,6 +20,7 @@ export default (params: any) => {
 	let header = {
 		// 'Blade-Auth': uni.getStorageSync('token') || '',
 		'Content-Type': 'application/json;charset=UTF-8',
+		'X-Authorization': 'Bearer ' + uni.getStorageSync('token'),
 		// 'Authorization': 'Basic c2FiZXI6c2FiZXJfc2VjcmV0',
 		'Tenant-Id': uni.getStorageSync('tenantId') || 'xxx', // avue配置相关
 		...params.header

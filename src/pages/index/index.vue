@@ -1,8 +1,8 @@
 <!--
  * @Author: zjy 3497577844@qq.com
- * @Date: 2024-08-14 00:19:54
+ * @Date: 2024-08-15 02:07:10
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-08-17 16:27:24
+ * @LastEditTime: 2024-08-18 14:21:02
  * @FilePath: \uni-preset-vue\src\pages\index\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -10,12 +10,15 @@
 
   <CustomNavbar></CustomNavbar>
 
-  <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
-    <image class="logo" src="/static/logo.png" />
-    <view class="text-area">
-      <text class="title">{{ title }}</text>
-    </view>
+  <!-- <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }"> -->
+  <view class="content">
+
+
+
+    <MaxWellList></MaxWellList>
+
     <button class="navigate-button" @click="goToLogin">Go to charging</button>
+
   </view>
 </template>
 
@@ -24,6 +27,7 @@ import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue'
 import { useUserStore } from "@/stores";
 import CustomNavbar from './compoents/CustomNavbar.vue';
+import MaxWellList from './compoents/MaxWellList.vue';
 // import { useRouter } from 'vue-router'
 const title = ref('Hello,lyy')
 
@@ -62,12 +66,12 @@ const goToLogin = () => {
 
 </script>
 
-<style>
+<style scoped>
 .content {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: start;
+  justify-content: start;
 }
 
 .logo {

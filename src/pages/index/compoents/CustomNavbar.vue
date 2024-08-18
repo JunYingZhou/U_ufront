@@ -1,3 +1,11 @@
+<!--
+ * @Author: zjy 3497577844@qq.com
+ * @Date: 2024-08-17 16:21:41
+ * @LastEditors: zjy 3497577844@qq.com
+ * @LastEditTime: 2024-08-18 02:20:41
+ * @FilePath: \uni-preset-vue\src\pages\index\compoents\CustomNavbar.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <script setup lang="ts">
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -7,15 +15,13 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 
 <template>
   <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
-
-
     <view class="logo1">
       <image class="logo-image" src="@/static/images/logo.png"></image>
-      <text class="logo-text">新鲜 · 亲民 · 快捷</text>
+      <!-- <text class="logo-text"> · 亲民 · 快捷</text> -->
     </view>
     <!-- 搜索条 -->
     <view class="search">
-      <text class="icon-search">搜索商品</text>
+      <text class="icon-search">是个摆设</text>
       <text class="icon-scan"></text>
     </view>
   </view>
@@ -24,7 +30,7 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 <style lang="scss">
 /* 自定义导航条 */
 .navbar {
-  background-image: url(@/static/images/navigator_bg.png);
+  background-color: #3FD1B2;
   background-size: cover;
   position: relative;
   display: flex;
