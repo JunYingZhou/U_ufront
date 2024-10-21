@@ -2,9 +2,9 @@
  * @Author: zjy 3497577844@qq.com
  * @Date: 2024-08-17 16:21:41
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-08-18 02:20:41
+ * @LastEditTime: 2024-10-22 01:40:03
  * @FilePath: \uni-preset-vue\src\pages\index\compoents\CustomNavbar.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%A
 -->
 <script setup lang="ts">
 
@@ -21,7 +21,7 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
     </view>
     <!-- 搜索条 -->
     <view class="search">
-      <text class="icon-search">是个摆设</text>
+      <text class="icon-search">请输入内容</text>
       <text class="icon-scan"></text>
     </view>
   </view>

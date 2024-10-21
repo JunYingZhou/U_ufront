@@ -2,7 +2,7 @@
  * @Author: zjy 3497577844@qq.com
  * @Date: 2024-08-15 02:07:10
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-08-18 02:27:56
+ * @LastEditTime: 2024-10-22 01:59:29
  * @FilePath: \uni-preset-vue\src\pages.json
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -64,12 +64,26 @@
 				"iconPath": "static/tabs/UnclickHome.png",
 				"selectedIconPath": "static/tabs/Home.png"
 			},
+			// {
+			// 	"text": "充电",
+			// 	"pagePath": "pages/charging/index",
+			// 	"iconPath": "static/tabs/UnclickHome.png",
+			// 	"selectedIconPath": "static/tabs/Home.png"
+			// },
 			{
 				"text": "我的",
 				"pagePath": "pages/my/index",
 				"iconPath": "static/tabs/UnclickHome.png",
 				"selectedIconPath": "static/tabs/Home.png"
 			}
-		]
+		],
+		// 设置中间按钮
+		"midButton": {
+			"width": "136rpx",
+			"height": "150rpx",
+			"text": "营养医嘱",
+			"iconPath": "/static/logo.png",
+			"iconWidth": "116rpx"
+		}
 	}
 }

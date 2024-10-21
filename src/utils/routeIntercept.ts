@@ -1,11 +1,4 @@
-/*
- * @Author: zjy 3497577844@qq.com
- * @Date: 2024-08-15 02:07:10
- * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-08-17 16:12:48
- * @FilePath: \uni-preset-vue\src\utils\routeIntercept.ts
- * @Description: 路由拦截器，强制要求登录
- */
+
 
 const NEED_LOGIN_PAGES = [
     "/pages/index/index",
