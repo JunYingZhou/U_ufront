@@ -30,7 +30,7 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 <style lang="scss">
 /* 自定义导航条 */
 .navbar {
-  background-color: #3FD1B2;
+  background-color: #385adf;
   background-size: cover;
   position: relative;
   display: flex;

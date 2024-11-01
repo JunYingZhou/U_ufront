@@ -13,9 +13,12 @@
   <!-- <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }"> -->
   <view class="content">
 
+    <!-- 设置瀑布流屏幕列表 -->
+     <WaterFallList></WaterFallList>
 
 
-    <MaxWellList></MaxWellList>
+
+    <!-- <MaxWellList></MaxWellList> -->
 
     <button class="navigate-button" @click="goToLogin">Go to charging</button>
 
@@ -27,6 +30,7 @@ import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue'
 import { useUserStore } from "@/stores";
 import CustomNavbar from './compoents/CustomNavbar.vue';
+import WaterFallList from '@/pages/index/compoents/WaterFallList.vue';
 import MaxWellList from './compoents/MaxWellList.vue';
 // import { useRouter } from 'vue-router'
 const title = ref('Hello,lyy')
