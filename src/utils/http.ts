@@ -2,12 +2,13 @@
  * @Author: zjy 3497577844@qq.com
  * @Date: 2024-08-15 02:07:10
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-08-18 13:35:38
+ * @LastEditTime: 2024-11-16 20:46:10
  * @FilePath: \uni-preset-vue\src\utils\http.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // 全局请求封装
-const base_url = 'http://47.115.50.181:8080'
+// const base_url = 'http://47.115.50.181:8080'
+const base_url = 'http://localhost:8000'
 // 请求超出时间
 const timeout = 5000
 
@@ -20,9 +21,10 @@ export default (params: any) => {
 	let header = {
 		// 'Blade-Auth': uni.getStorageSync('token') || '',
 		'Content-Type': 'application/json;charset=UTF-8',
-		'X-Authorization': 'Bearer ' + uni.getStorageSync('token'),
+		Authorization: `Bearer ${uni.getStorageSync('token')}`,
+		// 'X-Authorization': 'Bearer ' + uni.getStorageSync('token'),
 		// 'Authorization': 'Basic c2FiZXI6c2FiZXJfc2VjcmV0',
-		'Tenant-Id': uni.getStorageSync('tenantId') || 'xxx', // avue配置相关
+		// 'Tenant-Id': uni.getStorageSync('tenantId') || 'xxx', // avue配置相关
 		...params.header
 	}
 	if (method == "post") {
@@ -38,13 +40,49 @@ export default (params: any) => {
 			data: data,
 			timeout,
 			success(response) {
+				console.log('httpRes ------------> ',response);
 				const res: any = response
 				// 根据返回的状态码做出对应的操作
 				//获取成功
-				// console.log(res.statusCode);
 				if (res.statusCode == 200) {
-					resolve(res.data);
+					if(res.data.code == 200 || res.data.code == 0) {
+						console.log('成功', res.data.code);
+						resolve(res.data);
+					}else {
+						console.log('失败', res.data.code);
+						uni.clearStorageSync()
+						switch (res.data.code) {
+							case 401:
+								uni.showModal({
+									title: "提示",
+									content: "请登录",
+									showCancel: false,
+									success() {
+										setTimeout(() => {
+											uni.navigateTo({
+												url: "/pages/login/index",
+											})
+										}, 1000);
+									},
+								});
+								// 无感刷新token
+								break;
+							case 404:
+								uni.showToast({
+									title: '请求地址不存在...',
+									duration: 2000,
+								})
+								break;
+							default:
+								uni.showToast({
+									title: '请重试...',
+									duration: 2000,
+								})
+								break;
+						}
+					}
 				} else {
+					console.log('失败', res.statusCode);
 					uni.clearStorageSync()
 					switch (res.statusCode) {
 						case 401:
@@ -77,7 +115,7 @@ export default (params: any) => {
 				}
 			},
 			fail(err) {
-				console.log(err)
+				console.log('httpResFail ------------> ',response);
 				if (err.errMsg.indexOf('request:fail') !== -1) {
 					uni.showToast({
 						title: '网络异常',
@@ -101,3 +139,9 @@ export default (params: any) => {
 		});
 	}).catch(() => { });
 };
+
+
+function refreshToken() {
+	// 无感刷新token
+	
+}

@@ -1,6 +1,6 @@
 {
     "name" : "",
-    "appid" : "",
+    "appid" : "wxbd07dfc22497c8a8",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -43,7 +43,14 @@
             /* ios打包配置 */
             "ios" : {},
             /* SDK配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "oauth": {
+                    "weixin": {
+                        "appid": "wxbd07dfc22497c8a8",
+                        "appsecret": "0a0c609018dcbb1e8877800fc542b7f6"
+                    }
+                }
+            }
         }
     },
     /* 快应用特有相关 */

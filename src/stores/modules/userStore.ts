@@ -34,7 +34,8 @@ export const useUserStore = defineStore('userStore', () => {
   }
 
   // 设置token
-  const setToken = () => {
+  const setToken = (data: string) => {
+    uni.setStorageSync('token', data)
     token.value = uni.getStorageSync('token');
   }
 
