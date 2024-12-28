@@ -2,24 +2,23 @@
  * @Author: zjy 3497577844@qq.com
  * @Date: 2024-08-15 02:07:10
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-08-18 14:21:02
+ * @LastEditTime: 2024-11-16 19:20:31
  * @FilePath: \uni-preset-vue\src\pages\index\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
+  <view class="header">
+    <CustomNavbar></CustomNavbar>
+  </view>
 
-  <CustomNavbar></CustomNavbar>
+  <view class="category">
+    <CategoryTab></CategoryTab>
+  </view>
 
   <!-- <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }"> -->
   <view class="content">
-
     <!-- 设置瀑布流屏幕列表 -->
      <WaterFallList></WaterFallList>
-
-
-
-    <!-- <MaxWellList></MaxWellList> -->
-
     <button class="navigate-button" @click="goToLogin">Go to charging</button>
 
   </view>
@@ -30,10 +29,9 @@ import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue'
 import { useUserStore } from "@/stores";
 import CustomNavbar from './compoents/CustomNavbar.vue';
+import CategoryTab from './compoents/CategoryTab.vue';
 import WaterFallList from '@/pages/index/compoents/WaterFallList.vue';
-import MaxWellList from './compoents/MaxWellList.vue';
 // import { useRouter } from 'vue-router'
-const title = ref('Hello,lyy')
 
 // const router = useRouter()
 
@@ -71,11 +69,20 @@ const goToLogin = () => {
 </script>
 
 <style scoped>
+
+.header {
+  position: sticky;
+  top: 0;
+}
+
 .content {
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: start;
   justify-content: start;
+  flex: 1;
+  z-index: -1;
 }
 
 .logo {

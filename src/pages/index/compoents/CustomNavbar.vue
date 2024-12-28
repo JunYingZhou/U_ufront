@@ -7,17 +7,37 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%A
 -->
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
+const textList = ['提高反诈意识，铸就安全生活','构建反诈社会，守卫安全生活', '全民反诈，从你我开始']
+const currentIndex = ref(0)
+let timer: number | null = null
+
+const startRotation = () => {
+  timer = setInterval(() => {
+    currentIndex.value = (currentIndex.value + 1) % textList.length
+  }, 3000)
+}
+
+onMounted(() => {
+  startRotation()
+})
+
+onUnmounted(() => {
+  if (timer) {
+    clearInterval(timer)
+  }
+})
 
 </script>
 
 <template>
   <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
     <view class="logo1">
-      <image class="logo-image" src="@/static/images/logo.png"></image>
-      <!-- <text class="logo-text"> · 亲民 · 快捷</text> -->
+      <!-- <image class="logo-image" src="@/static/images/logo.png"></image> -->
+      <text class="logo-text fade-up"> · {{ textList[currentIndex] }}</text>
     </view>
     <!-- 搜索条 -->
     <view class="search">
@@ -30,7 +50,7 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 <style lang="scss">
 /* 自定义导航条 */
 .navbar {
-  background-color: #385adf;
+  background-color: #eb872a;
   background-size: cover;
   position: relative;
   display: flex;
@@ -54,6 +74,12 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
       padding-left: 20rpx;
       border-left: 1rpx solid #fff;
       font-size: 26rpx;
+      transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+      opacity: 0;
+    }
+
+    .fade-up {
+      animation: fadeUp 1s ease-in-out forwards;
     }
   }
 
@@ -75,6 +101,11 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
       padding-left: 20rpx;
       border-left: 1rpx solid #fff;
       font-size: 26rpx;
+      transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;;
+    }
+
+    .fade-up {
+      animation: fadeUp 1s ease-in-out forwards;
     }
   }
 
@@ -100,6 +131,17 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
   .icon-scan {
     font-size: 30rpx;
     padding: 15rpx;
+  }
+
+  @keyframes fadeUp {
+    0% {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 }
 </style>

@@ -61,6 +61,8 @@
     "@dcloudio/uni-ui": "^1.5.6",
     "axios": "^1.7.3",
     "axios-adapter-uniapp": "^0.1.4",
+    "crypto-js": "^4.2.0",
+    "jsencrypt": "^3.3.2",
     "pinia": "^2.2.1",
     "pinia-plugin-persistedstate": "^3.2.1",
     "rollup-plugin-visualizer": "^5.12.0",
