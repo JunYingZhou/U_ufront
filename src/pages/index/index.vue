@@ -28,9 +28,9 @@
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue'
 import { useUserStore } from "@/stores";
-import CustomNavbar from './compoents/CustomNavbar.vue';
-import CategoryTab from './compoents/CategoryTab.vue';
-import WaterFallList from '@/pages/index/compoents/WaterFallList.vue';
+import CustomNavbar from '@/pages/index/components/CustomNavbar.vue';
+import CategoryTab from '@/pages/index/components/CategoryTab.vue';
+import WaterFallList from '@/pages/index/components/WaterFallList.vue';
 // import { useRouter } from 'vue-router'
 
 // const router = useRouter()

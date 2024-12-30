@@ -87,7 +87,7 @@ const login = async () => {
       uuid: formData.value.uuid,
       captcha: formData.value.captcha
     });
-    if (res.msg === 'ok') {
+    if (res.msg == 'ok') {
       uni.showToast({
         icon: 'none',
         title: '成功登录',
@@ -100,6 +100,8 @@ const login = async () => {
         icon: 'none',
         title: res.msg,
       });
+      formData.value.captcha = '';
+      await getCaptcha();
     }
 
   } catch (error) {

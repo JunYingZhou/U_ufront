@@ -40,20 +40,16 @@ export default (params: any) => {
 			data: data,
 			timeout,
 			success(response) {
-				console.log('httpRes ------------> ',response);
 				const res: any = response
 				// 根据返回的状态码做出对应的操作
 				//获取成功
 				if (res.statusCode == 200) {
 					if(res.data.code == 200 || res.data.code == 0) {
-						console.log('成功', res.data.code);
 						resolve(res.data);
 					}
 					else {
-						console.log('失败该跳转了', res.data.code);
 						// 将res.data.code转成数字
 						const code = Number(res.data.code);
-						console.log(code === 401 ? '是401' : '不是401');
 						uni.clearStorageSync()
 						switch (code) {
 							case 401:
@@ -62,68 +58,40 @@ export default (params: any) => {
 									content: "请登录",
 									showCancel: false,
 									success() {
-										// setTimeout(() => {
 										uni.reLaunch({
 											url: "/pages/login/index",
 										})
-										// }, 1000);
 									},
 								});
 								// 无感刷新token
 								break;
 							case 404:
-								uni.showModal({
+								console.log('请求地址不存在');
+								uni.showToast({
 									title: res.data.msg,
 									duration: 2000,
 								})
+								resolve(res.data)
 								break;
 							case 400:
-								uni.showModal({
+								console.log('请求参数错误');
+								uni.showToast({
 									title: res.data.msg,
 									duration: 2000,
 								})
+								resolve(res.data)
 								break;
 							default:
-								uni.showModal({
+								console.log('其他错误');
+								uni.showToast({
 									title: res.data.msg,
 									duration: 2000,
 								})
+								resolve(res.data)
 								break;
 						}
 					}
 				}
-				// } else {
-				// 	console.log('失败', res.statusCode);
-				// 	uni.clearStorageSync()
-				// 	switch (res.statusCode) {
-				// 		case 401:
-				// 			uni.showModal({
-				// 				title: "提示",
-				// 				content: "请登录",
-				// 				showCancel: false,
-				// 				success() {
-				// 					setTimeout(() => {
-				// 						uni.navigateTo({
-				// 							url: "/pages/login/index",
-				// 						})
-				// 					}, 1000);
-				// 				},
-				// 			});
-				// 			break;
-				// 		case 404:
-				// 			uni.showToast({
-				// 				title: '请求地址不存在...',
-				// 				duration: 2000,
-				// 			})
-				// 			break;
-				// 		default:
-				// 			uni.showToast({
-				// 				title: '请重试...',
-				// 				duration: 2000,
-				// 			})
-				// 			break;
-				// 	}
-				// }
 			},
 			fail(err) {
 				if (err.errMsg.indexOf('request:fail') !== -1) {
