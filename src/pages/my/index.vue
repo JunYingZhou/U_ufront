@@ -33,10 +33,11 @@ onLoad(() => {
 const getUserInfoF = async() => {
   // 获取我的信息
   console.log('userId -->',userId.value)
-  const user: any = await getUserInfo(userId.value);
+  const user: any = await getUserInfo(userId.value)
   userInfo = user?.data
+  userStore.saveUserInfo(userInfo)
   dataLoading.value = true
-  console.log('个人信息',userInfo)
+  console.log('userInfo -->',userStore.getUserInfo)
 }
 
 const logout = () => {

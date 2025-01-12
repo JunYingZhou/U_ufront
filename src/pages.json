@@ -49,6 +49,12 @@
 			"style": {
 				"navigationBarTitleText": "登录页"
 			}
+		},
+		{
+			"path": "pages/my/components/PersonalInfo/index",
+			"style": {
+				"navigationBarTitleText": "个人信息"
+			}
 		}
 	],
 	"globalStyle": {

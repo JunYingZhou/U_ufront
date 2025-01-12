@@ -8,9 +8,9 @@
             </view>
         </view>
         <view class="head-user-info">
-            <view class="head-user-info-avatar">
+            <view class="head-user-info-avatar" @click="toUserInfo">
                 <image src="../../../../static/images/default_avatar.png"
-                webp="true" mode="scaleToFill"
+                webp="true" mode="scaleToFill" 
                 />
             </view>
                 <view class="head-user-info-name">
@@ -52,6 +52,14 @@ onMounted(() => {
     console.log(wxStatus);
     console.log('子组件获取到的数据',props.userName);
 })
+
+const toUserInfo = () => {
+    console.log("test");
+    
+    uni.navigateTo({
+        url: '/pages/my/components/PersonalInfo/index'
+    })
+}
 
 </script>
 <style scoped lang='scss'>

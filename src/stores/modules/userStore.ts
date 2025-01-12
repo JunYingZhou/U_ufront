@@ -25,6 +25,8 @@ export const useUserStore = defineStore('userStore', () => {
 
   const userId =ref<string>('');
 
+  const userInfo =ref<any>();
+
   // 保存会员信息，登录时使用
   const setUserProfile = (val: userInfoResult) => {
     userState.value = val;
@@ -33,6 +35,11 @@ export const useUserStore = defineStore('userStore', () => {
   // 清楚会员信息，登出时使用
   const clearUserProfile = () => {
     userState.value = undefined;
+  }
+
+  // 设置用户信息
+  const saveUserInfo = (val: any) => {
+    userInfo.value = val
   }
 
   // 设置token
@@ -53,6 +60,7 @@ export const useUserStore = defineStore('userStore', () => {
     token.value = '';
     userState.value = undefined;
     userId.value = '';
+    userInfo.value = '';
   }
 
   // 计算属性，判断用户是否登录
@@ -72,6 +80,14 @@ export const useUserStore = defineStore('userStore', () => {
     }
   })
 
+  const getUserInfo = computed(() => {
+    if (userInfo.value) {
+      return userInfo.value;
+    } else {
+      return '';
+    }
+  })
+
 
 
   return {
@@ -83,7 +99,9 @@ export const useUserStore = defineStore('userStore', () => {
     isLogin,
     logout,
     setUserId,
-    getUserId
+    getUserId,
+    saveUserInfo,
+    getUserInfo
   };
 }, {
   persist: {
