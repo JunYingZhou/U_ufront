@@ -46,3 +46,11 @@ export const weiXinLogin = (params: any) => {
     data: params,
   })
 }
+
+// 获取用户信息
+export const getUserInfo = (params: any) => {
+  return request({
+    url: `/system/user/${params}`,
+    method: 'get',
+  })
+}

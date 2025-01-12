@@ -61,9 +61,10 @@ onLoad(() => {
 })
 
 const goToLogin = () => {
+  console.log('跳转到我的'); // 确认函数被调用
   uni.switchTab({
     url: '/pages/my/index'
-  })
+  });
 }
 
 </script>

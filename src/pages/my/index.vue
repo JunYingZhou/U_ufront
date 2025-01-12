@@ -1,11 +1,80 @@
 <script setup lang="ts">
 import HeadInfo from '@/pages/my/components/HeadInfo/index.vue'
+import { useUserStore } from "@/stores";
+const userStore = useUserStore()
+import { onMounted, onUnmounted, reactive, ref} from 'vue'
+import { getUserInfo } from '@/api/user'
+import { onPullDownRefresh, onLoad } from '@dcloudio/uni-app';
+
+
+let userId = ref<string>('')
+
+let userInfo = reactive<any>({})
+
+let dataLoading = ref(false)
+
+// 下拉刷新
+onPullDownRefresh(() => {
+  console.log('下拉刷新')
+  getUserInfoF();
+  setTimeout(() => {
+    uni.stopPullDownRefresh();
+  },500)
+
+})
+
+
+onLoad(() => {
+  // 获取我的信息
+  userId.value = userStore.getUserId;
+  getUserInfoF();
+})
+
+const getUserInfoF = async() => {
+  // 获取我的信息
+  console.log('userId -->',userId.value)
+  const user: any = await getUserInfo(userId.value);
+  userInfo = user?.data
+  dataLoading.value = true
+  console.log('个人信息',userInfo)
+}
+
+const logout = () => {
+  userStore.logout()
+  console.log("退出登录")
+  uni.redirectTo({ url: "/pages/login/index" });
+}
 </script>
 
 <template>
-  <HeadInfo></HeadInfo>
+  <view class="container">
+  <HeadInfo v-if="dataLoading" :userName="userInfo.username"></HeadInfo>
+
+  <!-- 退出按钮 -->
+   <view class="logout-button" @click="logout">
+    退出登录
+   </view>
+  </view>
 </template>
 
 <style scoped>
-
+.container {
+  width: 100%;
+}
+.logout-button {
+  position: fixed;
+  bottom: 2rem;
+  display: flex;
+  left: 50%;
+  transform: translateX(-50%);
+  justify-content: center;
+  align-items: center;
+  width: 40%;
+  height: 3rem;
+  background-color: white;
+  border-radius: 1.5rem;
+  border: 1px solid #b6b4b4;
+  color: black;
+  font-size: 16px
+}
 </style>

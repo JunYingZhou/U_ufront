@@ -93,6 +93,7 @@ const login = async () => {
         title: '成功登录',
       });
       userStore.setToken(res.data.token);
+      userStore.setUserId(res.data.userId);
       console.log('token数据', uni.getStorageSync('token')); // 调试信息
       uni.switchTab({ url: '/pages/index/index' });
     } else {

@@ -23,6 +23,8 @@ export const useUserStore = defineStore('userStore', () => {
 
   const token = ref<string>();
 
+  const userId =ref<string>('');
+
   // 保存会员信息，登录时使用
   const setUserProfile = (val: userInfoResult) => {
     userState.value = val;
@@ -39,12 +41,34 @@ export const useUserStore = defineStore('userStore', () => {
     token.value = uni.getStorageSync('token');
   }
 
+  // 设置用户id
+  const setUserId = (data: string) => {
+    uni.setStorageSync('userId', data)
+    userId.value = uni.getStorageSync('userId');
+  }
+
+  // 用户退出登录
+  const logout = () => {
+    uni.removeStorageSync('token');
+    token.value = '';
+    userState.value = undefined;
+    userId.value = '';
+  }
+
   // 计算属性，判断用户是否登录
   const isLogin = computed(() => {
     if (token.value) {
       return true;
     } else {
       return false;
+    }
+  })
+
+  const getUserId = computed(() => {
+    if (userId.value) {
+      return userId.value;
+    } else {
+      return '';
     }
   })
 
@@ -57,6 +81,9 @@ export const useUserStore = defineStore('userStore', () => {
     setUserProfile,
     clearUserProfile,
     isLogin,
+    logout,
+    setUserId,
+    getUserId
   };
 }, {
   persist: {

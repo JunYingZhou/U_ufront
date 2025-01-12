@@ -61,6 +61,15 @@ export default defineConfig(({command, mode}) =>{
         generateScopedName: `UNI_[hash:base64:5]_[local]`, // 设置css模块化的类名
         globalModulePaths: [], // 代表不想参与到css模块化的路径
       },
+    },
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '')
+        }
+      }
     }
   }
 });

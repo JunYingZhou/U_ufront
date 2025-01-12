@@ -8,14 +8,14 @@
             </view>
         </view>
         <view class="head-user-info">
-            <!-- <view class="head-user-info-avatar"> -->
+            <view class="head-user-info-avatar">
                 <image src="../../../../static/images/default_avatar.png"
                 webp="true" mode="scaleToFill"
                 />
-            <!-- </view> -->
+            </view>
                 <view class="head-user-info-name">
                     <view class="head-user-info-name-text">
-                        用户昵称
+                        {{props.userName}}
                     </view>
                 </view>
         </view>
@@ -41,9 +41,16 @@ let wxStatus = reactive<WxStatus>({
 })
 wxStatus = getWXStatusHeight();
 
-onMounted(() => {
+const props = defineProps({
+    userName: {
+        type: String,
+        default: '用户'
+    }
+})
 
+onMounted(() => {
     console.log(wxStatus);
+    console.log('子组件获取到的数据',props.userName);
 })
 
 </script>
@@ -58,21 +65,29 @@ onMounted(() => {
         // background-color: rgba(0, 0, 0, 0.6);
         width: 100%;
         margin: 0 0 10px 10px;
-        background-color: red;
+        // background-color: red;
         .head-top {
             width: 1.5rem;
             height: 1.5rem;
         }
     }
     .head-user-info {
-        background-color: aquamarine;
+        // background-color: aquamarine;
+        // background-color: white;
+        // 设置下方阴影
+        // box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
         display: flex;
+        // justify-content: space-between;
+        padding: 0 0.8rem;
         height: 4rem;
         line-height: 4rem;
         .head-user-info-avatar {
-            margin: 10px;
-            width: 4rem;
-            height: 4rem;
+            // margin: 10px;
+            width: 3rem;
+            height: 3rem;
+        }
+        .head-user-info-name {
+            margin-left: 0.6rem;
         }
     }
 }
