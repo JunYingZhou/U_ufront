@@ -8,7 +8,7 @@
  */
 // 全局请求封装
 // const base_url = 'http://47.115.50.181:8080'
-const base_url = 'http://localhost:8000'
+const base_url = 'http://192.168.1.199:8000'
 // 请求超出时间
 const timeout = 5000
 

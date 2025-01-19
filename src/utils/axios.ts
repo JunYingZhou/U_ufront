@@ -12,7 +12,7 @@ import axios from 'axios';
 
 // 创建 Axios 实例
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8989/api', // 基础 API URL
+    baseURL: 'http://192.168.1.199:8989/api', // 基础 API URL
     // adapter: axiosAdapterUniapp, // 使用 uni.request 作为适配器
     timeout: 10000, // 请求超时时间
     headers: {
