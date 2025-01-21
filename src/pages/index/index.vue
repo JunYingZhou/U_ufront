@@ -7,20 +7,17 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <view class="header">
-    <CustomNavbar></CustomNavbar>
-  </view>
+  <view class="container">
+    <view class="header">
+      <CustomNavbar></CustomNavbar>
+      <CategoryTab></CategoryTab>
+    </view>
+    <!-- <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }"> -->
+    <view class="content">
+      <!-- 设置瀑布流屏幕列表 -->
+      <WaterFallList></WaterFallList>
 
-  <view class="category">
-    <CategoryTab></CategoryTab>
-  </view>
-
-  <!-- <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }"> -->
-  <view class="content">
-    <!-- 设置瀑布流屏幕列表 -->
-     <WaterFallList></WaterFallList>
-    <button class="navigate-button" @click="goToLogin">Go to charging</button>
-
+    </view>
   </view>
 </template>
 
@@ -71,10 +68,17 @@ const goToLogin = () => {
 
 <style scoped>
 
+.container {
+  /* height: 100vh; */
+}
+
 .header {
   position: sticky;
   top: 0;
+  z-index: 1;
+  background-color: #fff;
 }
+
 
 .content {
   display: flex;
@@ -83,7 +87,6 @@ const goToLogin = () => {
   align-items: start;
   justify-content: start;
   flex: 1;
-  z-index: -1;
 }
 
 .logo {

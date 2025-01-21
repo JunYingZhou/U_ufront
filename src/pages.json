@@ -39,12 +39,6 @@
 			}
 		},
 		{
-			"path": "pages/charging/index",
-			"style": {
-				"navigationBarTitleText": "充电页面"
-			}
-		},
-		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "登录页"
@@ -54,6 +48,12 @@
 			"path": "pages/my/components/PersonalInfo/index",
 			"style": {
 				"navigationBarTitleText": "个人信息"
+			}
+		},
+		{
+			"path": "pages/article/index",
+			"style": {
+				"navigationBarTitleText": "文章详情"
 			}
 		}
 	],
