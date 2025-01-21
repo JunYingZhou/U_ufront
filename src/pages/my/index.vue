@@ -78,4 +78,11 @@ const logout = () => {
   color: black;
   font-size: 16px
 }
+
+
+.logout-button:active {
+  background-color: #eb872a;
+  color: white;
+  border: 1px solid #eb872a;
+}
 </style>

@@ -66,8 +66,9 @@ const toUserInfo = () => {
 .head-info {
     background-image: url(https://pic5.40017.cn/i/ori/1xyQQgwU5vG.png);
     background-size: 100% 100%;
-    height: 16.5rem;
+    height: 10.5rem;
     width: 100%;
+    border-bottom: 1px solid #b6b4b4;
     .head-info-setting {
         // padding-top: 40px;
         // background-color: rgba(0, 0, 0, 0.6);
