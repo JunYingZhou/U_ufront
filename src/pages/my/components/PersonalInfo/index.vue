@@ -6,7 +6,7 @@
         <view class="info">
             <view class="info-item">
                 <text class="info-label">用户名:</text>
-                <text class="info-value">{{ userInfo.username }}</text>
+                <text class="info-value">{{ userInfo.nickname }}</text>
             </view>
             <view class="info-item">
                 <text class="info-label">邮箱:</text>
@@ -26,6 +26,7 @@
 <script setup lang='ts'>
 import { onMounted, reactive, toRefs, watch } from 'vue';
 import { useUserStore } from "@/stores";
+import { getUserInfo } from '@/api/user';
 // import minioClient from "@/utils/minio";
 const userStore = useUserStore()
 
@@ -45,18 +46,59 @@ const uploadAvatar = () => {
         success(res) {
             const filePath = res.tempFiles[0].tempFilePath;
             console.log('选择的媒体文件路径:', filePath);
-            const bucketName = 'zjyminio';
-            const objectName = 'avatar/' + Date.now() + '.webp';
 
-            // 更新头像
-            uni.showToast({
-                title: '等待审核中',
-                duration: 2000,
-            })
+            // 读取文件数据
+            uni.getFileSystemManager().readFile({
+                filePath: filePath,
+                success: (fileRes) => {
+                    const boundary = "----WebKitFormBoundary" + new Date().getTime();
+                    const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+                    
+                    // 构造 multipart/form-data 体
+                    let body = `--${boundary}\r\n`;
+                    body += `Content-Disposition: form-data; name="avatarFile"; filename="${fileName}"\r\n`;
+                    body += `Content-Type: image/jpeg\r\n\r\n`; // 根据图片类型调整
+                    const bodyBuffer = new Uint8Array([...new TextEncoder().encode(body), ...new Uint8Array(fileRes.data), ...new TextEncoder().encode(`\r\n--${boundary}--\r\n`)]);
+
+                    // 发送请求
+                    uni.request({
+                        url: 'http://localhost:8000/system/user/avatar', // 替换为你的 API
+                        method: 'POST',
+                        header: {
+                            'Content-Type': `multipart/form-data; boundary=${boundary}`,
+                            'Authorization': `Bearer ${uni.getStorageSync('token')}`, // 如果需要鉴权
+                        },
+                        data: bodyBuffer.buffer,
+                        responseType: 'text',
+                        success(uploadRes) {
+                            console.log('上传成功:', uploadRes.data);
+                            // 更新用户信息
+                            getUserInfoF();                            
+                            uni.showToast({
+                                title: '头像更新成功',
+                                duration: 2000,
+                            });
+                        },
+                        fail(err) {
+                            console.error('上传失败:', err);
+                            uni.showToast({
+                                icon: 'none',
+                                title: '上传失败',
+                                duration: 2000,
+                            });
+                        }
+                    });
+                },
+                fail(err) {
+                    console.error('读取文件失败:', err);
+                }
+            });
+
         },
         fail(err) {
             console.error('选择媒体失败', err);
             uni.showToast({
+                icon: 'none',
                 title: '选择媒体失败',
                 duration: 2000,
             })
@@ -68,10 +110,16 @@ onMounted(() => {
     // 获取UserInfo并保持响应式
     Object.assign(userInfo, userStore.getUserInfo);
     console.log('子组件获取到的数据', userInfo);
-    // 使用toRefs将userInfo转换为响应式引用
-    const { username, email, gender, avatar } = toRefs(userInfo);
-    console.log('子组件获取到的数据', username.value, email.value, gender.value, avatar.value);
 })
+
+const getUserInfoF = async() => {
+  // 获取我的信息
+  console.log('userId -->',userInfo.id);
+  const user: any = await getUserInfo(userInfo.id)
+  userInfo = user?.data
+  userStore.saveUserInfo(userInfo)
+  console.log('userInfo -->',userStore.getUserInfo)
+}
 
 
 </script>
@@ -91,6 +139,7 @@ onMounted(() => {
 }
 
 .avatar {
+    position: relative;
     display: flex; /* Use flexbox for centering */
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
@@ -99,10 +148,14 @@ onMounted(() => {
     overflow: hidden;
     width: 7rem; /* 设置头像宽度 */
     height: 7rem; /* 设置头像高度 */
-    border: 3px solid #007bff; /* 边框颜色 */
+    border: 3px solid #eb872a; /* 边框颜色 */
 }
 
-.avatar image {
+.avatar image ::after {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    opacity: 0.5; /* Initially hidden */
+    transition: opacity 0.3s ease; /* Smooth transition */
     width: 100%;
     height: 100%;
 }

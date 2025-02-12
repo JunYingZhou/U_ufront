@@ -230,17 +230,19 @@ const getOpenId = (code: any) => {
 						grant_type:'authorization_code' //此处为固定值
 				    },
 				    success: (res: any) => {
+              console.log('获取openId', res)
                 // 向后端发送openId
                 weiXinLogin({
                   openId: res.data.openid,
                   sessionKey: res.data.session_key
                 }).then((res: any) => {
-                  console.log('获取openId', res)
+                  console.log('获取openId123', res)
                   if (res.msg === 'ok') {
                     uni.showToast({
                       icon: 'none',
                       title: '成功登录',
                     });
+                    userStore.setUserId(res.data.userId);
                     userStore.setToken(res.data.token);
                     console.log('token数据', uni.getStorageSync('token')); // 调试信息
                     uni.switchTab({ url: '/pages/index/index' });
@@ -264,13 +266,13 @@ const getOpenId = (code: any) => {
     <form class="form" @submit.prevent="login">
       <view class="input-span">
         <text class="label">账号/邮箱</text>
-        <input v-model="formData.username" type="email" name="username" id="email" placeholder="Enter your email" />
+        <input v-model="formData.username" type="email" name="username" id="email" placeholder="请输入...." />
         <!-- <text class="error" v-if="userNameError">账号/邮箱错误</text> -->
       </view>
       <view class="input-span">
         <text class="label">密码</text>
         <input v-model="formData.password" type="password" name="password" id="password"
-          placeholder="Enter your password" />
+          placeholder="请输入密码" />
       </view>
       <view class="input-span">
         <text class="label">验证码</text>
@@ -283,10 +285,10 @@ const getOpenId = (code: any) => {
         </view>
       </view>
       <view class="span">
-        <navigator url="/pages/forgot-password/index">忘记密码</navigator>
+        <!-- <navigator url="/pages/forgot-password/index">忘记密码</navigator> -->
       </view>
       <button class="submit" @click="login">登录</button>
-      <view class="span">还没有账号？<navigator url="/pages/sign-up/index">注册</navigator>
+      <view class="span">还没有账号？<navigator url="/pages/signUp/index">注册</navigator>
       </view>
     </form>
     <!--    <text>Login</text>-->
@@ -419,6 +421,7 @@ input[type="password"]:focus {
 }
 
 .span {
+  margin-top: 0.5rem;
   text-decoration: none;
   display: flex;
   flex-direction: row;

@@ -83,7 +83,7 @@ export default (params: any) => {
 								break;
 							default:
 								console.log('其他错误');
-								uni.showToast({
+								uni.showModal({
 									title: res.data.msg,
 									duration: 2000,
 								})

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import HeadInfo from '@/pages/my/components/HeadInfo/index.vue'
+import UserItem from '@/pages/my/components/UserItem/index.vue'
 import { useUserStore } from "@/stores";
 const userStore = useUserStore()
 import { onMounted, onUnmounted, reactive, ref} from 'vue'
@@ -48,14 +49,14 @@ const logout = () => {
 </script>
 
 <template>
-  <view class="container">
-  <HeadInfo v-if="dataLoading" :userName="userInfo.username"></HeadInfo>
-
+  <view class="container" v-if="dataLoading">
+  <HeadInfo :nickname="userInfo.nickname"></HeadInfo>
+  <UserItem></UserItem>
   <!-- 退出按钮 -->
-   <view class="logout-button" @click="logout">
+  </view>
+  <view class="logout-button" @click="logout">
     退出登录
    </view>
-  </view>
 </template>
 
 <style scoped>

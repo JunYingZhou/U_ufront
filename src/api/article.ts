@@ -18,3 +18,14 @@ export const getArticleList = () => {
     method: 'get',
   })
 }
+
+/**
+ * 新增文章列表
+ */
+export const addArticle = (params: any) => {
+  return request({
+    url: '/anti/article/addArticle',
+    method: 'post',
+    data: params
+  })
+}

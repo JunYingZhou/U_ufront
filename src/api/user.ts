@@ -28,6 +28,23 @@ export const userLogin1 = (params: any) => {
   })
 }
 
+// 账号登录（系统）
+export const addUser = (params: any) => {
+  return request({
+    url: '/system/user',
+    method: 'post',
+    data: params,
+  })
+}
+
+// 账号登录
+export const accountSignUp = (params: any) => {
+  return request({
+    url: '/auth/signUp',
+    method: 'post',
+    data: params,
+  })
+}
 
 // 账号登录
 export const accountLogin = (params: any) => {
@@ -52,5 +69,14 @@ export const getUserInfo = (params: any) => {
   return request({
     url: `/system/user/${params}`,
     method: 'get',
+  })
+}
+
+// 上传头像
+export const updateAvatar = (params: any) => {
+  return request({
+    url: `/system/user/avatar`,
+    method: 'get',
+    data: params,
   })
 }

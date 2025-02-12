@@ -39,9 +39,39 @@
 			}
 		},
 		{
+			"path": "pages/community/index",
+			"style": {
+				"navigationBarTitleText": "社区列表"
+			}
+		},
+		{
+			"path": "pages/communityDetail/index",
+			"style": {
+				"navigationBarTitleText": "社区详情"
+			}
+		},
+		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "登录页"
+			}
+		},
+		{
+			"path": "pages/establish/index",
+			"style": {
+				"navigationBarTitleText": "文章发布页"
+			}
+		},
+		{
+			"path": "pages/star/index",
+			"style": {
+				"navigationBarTitleText": "我的收藏"
+			}
+		},
+		{
+			"path": "pages/signUp/index",
+			"style": {
+				"navigationBarTitleText": "注册页"
 			}
 		},
 		{
@@ -75,12 +105,12 @@
 				"iconPath": "static/tabs/UnclickHome.png",
 				"selectedIconPath": "static/tabs/Home.png"
 			},
-			// {
-			// 	"text": "充电",
-			// 	"pagePath": "pages/charging/index",
-			// 	"iconPath": "static/tabs/UnclickHome.png",
-			// 	"selectedIconPath": "static/tabs/Home.png"
-			// },
+			{
+				"text": "社区",
+				"pagePath": "pages/community/index",
+				"iconPath": "static/tabs/communityBar.png",
+				"selectedIconPath": "static/tabs/communityBarActive.png"
+			},
 			{
 				"text": "我的",
 				"pagePath": "pages/my/index",
@@ -88,7 +118,6 @@
 				"selectedIconPath": "static/tabs/MyActive.png"
 			}
 		],
-		// 设置中间按钮
 		"midButton": {
 			"width": "136rpx",
 			"height": "150rpx",

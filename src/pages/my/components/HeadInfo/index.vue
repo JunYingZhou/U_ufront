@@ -9,13 +9,13 @@
         </view>
         <view class="head-user-info">
             <view class="head-user-info-avatar" @click="toUserInfo">
-                <image src="../../../../static/images/default_avatar.png"
+                <image :src="userInfo.avatar ? userInfo.avatar : 'http://117.72.78.239:9000/zjyminio/defaultAvatar.webp'"
                 webp="true" mode="scaleToFill" 
                 />
             </view>
                 <view class="head-user-info-name">
                     <view class="head-user-info-name-text">
-                        {{props.userName}}
+                        {{props.nickname}}
                     </view>
                 </view>
         </view>
@@ -25,6 +25,10 @@
 <script setup lang='ts'>
 import getWXStatusHeight from '@/common/utils/getWxStatusHeight';
 import { onMounted, reactive } from 'vue';
+import { onPullDownRefresh } from '@dcloudio/uni-app';
+import { useUserStore } from "@/stores";
+import { ref } from 'vue';
+const userStore = useUserStore()
 
 interface WxStatus {
   barHeight: number;
@@ -32,6 +36,8 @@ interface WxStatus {
   barWidth: number;
   menuButtonInfo: any;
 }
+
+let userInfo = ref<any>({});
 
 let wxStatus = reactive<WxStatus>({
     barHeight: 0,
@@ -45,12 +51,29 @@ const props = defineProps({
     userName: {
         type: String,
         default: '用户'
+    },
+    nickname: {
+        type: String,
+        default: '用户'  
     }
 })
 
+//下拉刷新
+// 下拉刷新
+onPullDownRefresh(() => {
+  console.log('下拉刷新');
+  setTimeout(() => {
+    userInfo.value = userStore.getUserInfo
+    uni.stopPullDownRefresh();
+  }, 1000);
+});
+
+
+
 onMounted(() => {
+    userInfo.value = userStore.getUserInfo
     console.log(wxStatus);
-    console.log('子组件获取到的数据',props.userName);
+    console.log('子组件获取到的数据123231231231231231',userStore.getUserInfo);  
 })
 
 const toUserInfo = () => {
@@ -94,6 +117,9 @@ const toUserInfo = () => {
             // margin: 10px;
             width: 3rem;
             height: 3rem;
+            image {
+             border-radius: 50%;   
+            }
         }
         .head-user-info-name {
             margin-left: 0.6rem;
