@@ -1,0 +1,1 @@
+<view class="container data-v-9b727b43"><image class="cover-image data-v-9b727b43" src="{{a}}" mode="widthFix" lazy-load/><view class="title data-v-9b727b43">{{b}}</view><view class="abstract data-v-9b727b43">{{c}}</view><view class="content data-v-9b727b43">{{d}}</view></view><foot wx:if="{{e}}" class="data-v-9b727b43" u-i="9b727b43-0" bind:__l="__l" u-p="{{e}}"/>

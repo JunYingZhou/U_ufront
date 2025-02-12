@@ -1,0 +1,71 @@
+
+/* 页面容器 */
+.container.data-v-daea8ab6 {
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+/* 文章卡片 */
+.article-card.data-v-daea8ab6 {
+    display: flex;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+.article-card.data-v-daea8ab6:hover {
+    transform: translateY(-3px);
+}
+
+/* 文章封面 */
+.article-cover.data-v-daea8ab6 {
+    width: 100px;
+    height: 80px;
+    border-radius: 8px 0 0 8px;
+    -o-object-fit: cover;
+       object-fit: cover;
+}
+
+/* 文章内容 */
+.article-content.data-v-daea8ab6 {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* 文章标题 */
+.article-title.data-v-daea8ab6 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* 文章摘要 */
+.article-abstract.data-v-daea8ab6 {
+    font-size: 14px;
+    color: #666;
+}
+
+/* 加载中提示 */
+.loading.data-v-daea8ab6,
+.no-more.data-v-daea8ab6 {
+    text-align: center;
+    color: #888;
+    padding: 15px;
+}
+.article-abstract.data-v-daea8ab6 {
+    font-size: 14px;
+    color: #666;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 限制最大显示 2 行 */
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+

@@ -1,0 +1,25 @@
+
+.container.data-v-276ac604 {
+  width: 100%;
+}
+.logout-button.data-v-276ac604 {
+  position: fixed;
+  bottom: 2rem;
+  display: flex;
+  left: 50%;
+  transform: translateX(-50%);
+  justify-content: center;
+  align-items: center;
+  width: 40%;
+  height: 3rem;
+  background-color: white;
+  border-radius: 1.5rem;
+  border: 1px solid #b6b4b4;
+  color: black;
+  font-size: 16px
+}
+.logout-button.data-v-276ac604:active {
+  background-color: #eb872a;
+  color: white;
+  border: 1px solid #eb872a;
+}

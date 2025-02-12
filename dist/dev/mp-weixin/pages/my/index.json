@@ -1,0 +1,12 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "我的",
+  "enablePullDownRefresh": true,
+  "navigationBarBackgroundColor": "#FFFFFF",
+  "navigationBarTextStyle": "black",
+  "navigationBarBorder": "1px solid #DDDDDD",
+  "usingComponents": {
+    "head-info": "./components/HeadInfo/index",
+    "user-item": "./components/UserItem/index"
+  }
+}

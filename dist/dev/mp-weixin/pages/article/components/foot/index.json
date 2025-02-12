@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "comment": "../../../../common/components/comment/index"
+  }
+}

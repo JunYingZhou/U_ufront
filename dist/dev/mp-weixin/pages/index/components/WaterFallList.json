@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "water-fall-list-item": "./WaterFallListItem"
+  }
+}

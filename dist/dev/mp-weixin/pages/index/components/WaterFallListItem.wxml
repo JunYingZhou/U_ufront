@@ -1,0 +1,1 @@
+<view class="item-box-item data-v-45a86133" bindtap="{{d}}"><image class="img-tip data-v-45a86133" src="{{a}}" mode="widthFix" lazy-load/><view class="tit-tip multi-line-omit data-v-45a86133">{{b}}</view><view class="desc-tip multi-line-omit data-v-45a86133">{{c}}</view></view>

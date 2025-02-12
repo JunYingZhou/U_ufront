@@ -1,0 +1,47 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/my/index",
+    "pages/community/index",
+    "pages/communityDetail/index",
+    "pages/login/index",
+    "pages/establish/index",
+    "pages/star/index",
+    "pages/signUp/index",
+    "pages/my/components/PersonalInfo/index",
+    "pages/article/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#333",
+    "selectedColor": "#27ba9b",
+    "backgroundColor": "#fff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "text": "首页",
+        "pagePath": "pages/index/index",
+        "iconPath": "static/tabs/UnclickHome.png",
+        "selectedIconPath": "static/tabs/Home.png"
+      },
+      {
+        "text": "社区",
+        "pagePath": "pages/community/index",
+        "iconPath": "static/tabs/communityBar.png",
+        "selectedIconPath": "static/tabs/communityBarActive.png"
+      },
+      {
+        "text": "我的",
+        "pagePath": "pages/my/index",
+        "iconPath": "static/tabs/My.png",
+        "selectedIconPath": "static/tabs/MyActive.png"
+      }
+    ]
+  },
+  "usingComponents": {}
+}
