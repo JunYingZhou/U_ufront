@@ -18,8 +18,8 @@
         <view class="form-group-image">
             <label for="coverImage">封面图片:</label>
             <view class="cover-image" @click="handleCoverImageUpload">
-                <image v-if="!coverImage" class="cover-image-url"
-                    src="http://117.72.78.239:9000/zjyminio/upload.png" mode="widthFix"></image>
+                <image v-if="!coverImage" class="cover-image-url" src="http://117.72.78.239:9000/zjyminio/upload.png"
+                    mode="widthFix"></image>
                 <image v-else class="cover-image-url" :src="coverImage" mode="widthFix"></image>
             </view>
             <!-- <input type="file" id="coverImage" @change="handleCoverImageUpload" /> -->
@@ -59,7 +59,7 @@
 import { reactive, ref } from "vue";
 import { getCategoryList } from '@/api/category'
 import { onLoad } from '@dcloudio/uni-app';
-import { addArticle} from '@/api/article'
+import { addArticle } from '@/api/article'
 import { useUserStore } from "@/stores";
 const userStore = useUserStore()
 const article = ref({
@@ -76,6 +76,7 @@ let categoryList = ref<any>([]);
 let categoryNameList = ref<any>([]);
 let categoryName = ref('');
 let loading = ref(false);
+let articleId = ref<number>(0);
 
 
 onLoad(async () => {
@@ -106,49 +107,11 @@ const handleCoverImageUpload = (event: Event) => {
             console.log('选择的媒体文件路径:', filePath);
             article.value.coverImage = filePath;
             coverImage.value = filePath;
-            handleCoverImageUploadF(coverImage.value);
+            // handleCoverImageUploadF(coverImage.value);
         }
     })
 };
 
-// 上传封面图片
-const handleCoverImageUploadF = (filePath: any) => {
-    // 读取文件数据
-    uni.getFileSystemManager().readFile({
-    filePath: filePath,
-    success: (fileRes) => {
-        const boundary = "----WebKitFormBoundary" + new Date().getTime();
-        const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-        
-        // 构造 multipart/form-data 体
-        let body = `--${boundary}\r\n`;
-        body += `Content-Disposition: form-data; name="coverImage"; filename="${fileName}"\r\n`;
-        body += `Content-Type: image/jpeg\r\n\r\n`; // 根据图片类型调整
-        const bodyBuffer = new Uint8Array([...new TextEncoder().encode(body), ...new Uint8Array(fileRes.data), ...new TextEncoder().encode(`\r\n--${boundary}--\r\n`)]);
-
-        // 发送请求
-        uni.request({
-            url: 'http://localhost:8000/anti/article/coverImageUpload', // 替换为你的 API
-            method: 'POST',
-            header: {
-                'Content-Type': `multipart/form-data; boundary=${boundary}`,
-                'Authorization': `Bearer ${uni.getStorageSync('token')}`, // 如果需要鉴权
-            },
-            data: bodyBuffer.buffer,
-            responseType: 'text',
-            success(uploadRes) {
-                console.log('上传成功:', uploadRes.data);
-            },
-            fail(err) {
-                console.error('上传失败:', err);
-            }
-        });
-    },
-    fail(err) {
-        console.error('读取文件失败:', err);
-    }
-});
-}
 
 // 处理内容图片上传（支持多张图片）
 const handleContentImagesUpload = (event: Event) => {
@@ -167,49 +130,91 @@ const handleContentImagesUpload = (event: Event) => {
             const filePath = res.tempFiles[0].tempFilePath;
             contentImages.push(filePath);
             // article.value.contentImages = contentImages;
-            console.log('选择的媒体文件路径:', contentImages);
-
+            console.log('选择的媒体文件路径123:', contentImages);
         }
     })
 };
 
 // 上传封面图片
-const handleContentImagesUploadF = (filePath: any) => {
+const handleCoverImageUploadF = (articleId: any, filePath: any) => {
     // 读取文件数据
     uni.getFileSystemManager().readFile({
-    filePath: filePath,
-    success: (fileRes) => {
-        const boundary = "----WebKitFormBoundary" + new Date().getTime();
-        const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-        
-        // 构造 multipart/form-data 体
-        let body = `--${boundary}\r\n`;
-        body += `Content-Disposition: form-data; name="contentImages"; filename="${fileName}"\r\n`;
-        body += `Content-Type: image/jpeg\r\n\r\n`; // 根据图片类型调整
-        const bodyBuffer = new Uint8Array([...new TextEncoder().encode(body), ...new Uint8Array(fileRes.data), ...new TextEncoder().encode(`\r\n--${boundary}--\r\n`)]);
+        filePath: filePath,
+        success: (fileRes) => {
+            const boundary = "----WebKitFormBoundary" + new Date().getTime();
+            const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
 
-        // 发送请求
-        uni.request({
-            url: 'http://localhost:8000/anti/article/contentImagesUpload', // 替换为你的 API
-            method: 'POST',
-            header: {
-                'Content-Type': `multipart/form-data; boundary=${boundary}`,
-                'Authorization': `Bearer ${uni.getStorageSync('token')}`, // 如果需要鉴权
-            },
-            data: bodyBuffer.buffer,
-            responseType: 'text',
-            success(uploadRes) {
-                console.log('上传成功:', uploadRes.data);
+            // 构造 multipart/form-data 体
+            let body = `--${boundary}\r\n`;
+            body += `Content-Disposition: form-data; name="coverImage"; filename="${fileName}"\r\n`;
+            body += `Content-Type: image/jpeg\r\n\r\n`; // 根据图片类型调整
+            const bodyBuffer = new Uint8Array([...new TextEncoder().encode(body), ...new Uint8Array(fileRes.data), ...new TextEncoder().encode(`\r\n--${boundary}--\r\n`)]);
+
+            // 发送请求
+            uni.request({
+                url: `http://localhost:8000/anti/article/coverImageUpload/${articleId}`, // 替换为你的 API
+                method: 'POST',
+                header: {
+                    'Content-Type': `multipart/form-data; boundary=${boundary}`,
+                    'Authorization': `Bearer ${uni.getStorageSync('token')}`, // 如果需要鉴权
+                },
+                data: bodyBuffer.buffer,
+                responseType: 'text',
+                success(uploadRes) {
+                    console.log('上传成功:', uploadRes.data);
+                },
+                fail(err) {
+                    console.error('上传失败:', err);
+                }
+            });
+        },
+        fail(err) {
+            console.error('读取文件失败12312:', err);
+        }
+    });
+}
+
+
+// 上传封面图片
+const handleContentImagesUploadF = (articleId: any,filePaths: any) => {
+    // 读取文件数据
+    filePaths.forEach(filePath => {
+        console.log('选择的媒体文件路径:', filePath);
+        uni.getFileSystemManager().readFile({
+            filePath: filePath,
+            success: (fileRes) => {
+                const boundary = "----WebKitFormBoundary" + new Date().getTime();
+                const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+
+                // 构造 multipart/form-data 体
+                let body = `--${boundary}\r\n`;
+                body += `Content-Disposition: form-data; name="contentImage"; filename="${fileName}"\r\n`;
+                body += `Content-Type: image/jpeg\r\n\r\n`; // 根据图片类型调整
+                const bodyBuffer = new Uint8Array([...new TextEncoder().encode(body), ...new Uint8Array(fileRes.data), ...new TextEncoder().encode(`\r\n--${boundary}--\r\n`)]);
+
+                // 发送请求
+                uni.request({
+                    url: `http://localhost:8000/anti/article/contentImagesUpload/${articleId}`, // 替换为你的 API
+                    method: 'POST',
+                    header: {
+                        'Content-Type': `multipart/form-data; boundary=${boundary}`,
+                        'Authorization': `Bearer ${uni.getStorageSync('token')}`, // 如果需要鉴权
+                    },
+                    data: bodyBuffer.buffer,
+                    responseType: 'text',
+                    success(uploadRes) {
+                        console.log('上传成功:', uploadRes.data);
+                    },
+                    fail(err) {
+                        console.error('上传失败:', err);
+                    }
+                });
             },
             fail(err) {
-                console.error('上传失败:', err);
+                console.error('读取文件失败:', err);
             }
         });
-    },
-    fail(err) {
-        console.error('读取文件失败:', err);
-    }
-});
+    })
 }
 
 
@@ -217,7 +222,7 @@ const handleContentImagesUploadF = (filePath: any) => {
 // 处理分类选择
 const handleCategoryChange = (event: any) => {
     console.log("adasdasdadasdasd", event);
-    
+
     const index = event.detail.value;
     article.value.categoryId = event.detail.value;
     categoryName.value = categoryNameList.value[index];
@@ -227,7 +232,7 @@ const handleCategoryChange = (event: any) => {
 // 处理文章提交
 const submitArticle = async () => {
     console.log('提交的文章:', article.value);
-    if(!(article.value.articleTitle && article.value.articleAbstract && article.value.articleMain && article.value.categoryId)){
+    if (!(article.value.articleTitle && article.value.articleAbstract && article.value.articleMain && article.value.categoryId)) {
         uni.showModal({
             icon: 'none',
             title: '请填写完整数据',
@@ -235,22 +240,24 @@ const submitArticle = async () => {
         return
     }
     let res: any = await addArticle(article.value);
-    console.log('返回数据', res);
-    if(res.msg === 'ok'){
+    console.log('返回数据', res.data.split('.')[1]);
+    if (res.msg === 'ok') {
+        articleId.value = res.data.split('.')[1]
+        handleCoverImageUploadF(articleId.value, coverImage.value);
         uni.showToast({
             title: '发布成功',
             icon: 'success'
         })
         setTimeout(() => {
-            uni.switchTab({url: '/pages/index/index'})
-        },1000)
-    }else{
+            uni.switchTab({ url: '/pages/index/index' })
+        }, 1000)
+    } else {
         uni.showToast({
             title: res.msg,
             icon: 'error'
         })
     }
-    
+
 };
 </script>
 
@@ -325,6 +332,7 @@ ul {
     padding-left: 20px;
     list-style-type: disc;
 }
+
 .picker {
     padding: 10px;
     border: 1px solid #ccc;

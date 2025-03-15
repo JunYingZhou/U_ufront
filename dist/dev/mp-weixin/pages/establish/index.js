@@ -20,6 +20,7 @@ const _sfc_main = /* @__PURE__ */ common_vendor.b({
     let categoryNameList = common_vendor.r([]);
     let categoryName = common_vendor.r("");
     let loading = common_vendor.r(false);
+    let articleId = common_vendor.r(0);
     common_vendor.h(async () => {
       let res = await api_category.g();
       console.log("分类类别", res);
@@ -40,47 +41,6 @@ const _sfc_main = /* @__PURE__ */ common_vendor.b({
           console.log("选择的媒体文件路径:", filePath);
           article.value.coverImage = filePath;
           coverImage.value = filePath;
-          handleCoverImageUploadF(coverImage.value);
-        }
-      });
-    };
-    const handleCoverImageUploadF = (filePath) => {
-      common_vendor.i.getFileSystemManager().readFile({
-        filePath,
-        success: (fileRes) => {
-          const boundary = "----WebKitFormBoundary" + (/* @__PURE__ */ new Date()).getTime();
-          const fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-          let body = `--${boundary}\r
-`;
-          body += `Content-Disposition: form-data; name="coverImage"; filename="${fileName}"\r
-`;
-          body += `Content-Type: image/jpeg\r
-\r
-`;
-          const bodyBuffer = new Uint8Array([...new TextEncoder().encode(body), ...new Uint8Array(fileRes.data), ...new TextEncoder().encode(`\r
---${boundary}--\r
-`)]);
-          common_vendor.i.request({
-            url: "http://localhost:8000/anti/article/coverImageUpload",
-            // 替换为你的 API
-            method: "POST",
-            header: {
-              "Content-Type": `multipart/form-data; boundary=${boundary}`,
-              "Authorization": `Bearer ${common_vendor.i.getStorageSync("token")}`
-              // 如果需要鉴权
-            },
-            data: bodyBuffer.buffer,
-            responseType: "text",
-            success(uploadRes) {
-              console.log("上传成功:", uploadRes.data);
-            },
-            fail(err) {
-              console.error("上传失败:", err);
-            }
-          });
-        },
-        fail(err) {
-          console.error("读取文件失败:", err);
         }
       });
     };
@@ -99,7 +59,47 @@ const _sfc_main = /* @__PURE__ */ common_vendor.b({
         success(res) {
           const filePath = res.tempFiles[0].tempFilePath;
           contentImages.push(filePath);
-          console.log("选择的媒体文件路径:", contentImages);
+          console.log("选择的媒体文件路径123:", contentImages);
+        }
+      });
+    };
+    const handleCoverImageUploadF = (articleId2, filePath) => {
+      common_vendor.i.getFileSystemManager().readFile({
+        filePath,
+        success: (fileRes) => {
+          const boundary = "----WebKitFormBoundary" + (/* @__PURE__ */ new Date()).getTime();
+          const fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+          let body = `--${boundary}\r
+`;
+          body += `Content-Disposition: form-data; name="coverImage"; filename="${fileName}"\r
+`;
+          body += `Content-Type: image/jpeg\r
+\r
+`;
+          const bodyBuffer = new Uint8Array([...new TextEncoder().encode(body), ...new Uint8Array(fileRes.data), ...new TextEncoder().encode(`\r
+--${boundary}--\r
+`)]);
+          common_vendor.i.request({
+            url: `http://localhost:8000/anti/article/coverImageUpload/${articleId2}`,
+            // 替换为你的 API
+            method: "POST",
+            header: {
+              "Content-Type": `multipart/form-data; boundary=${boundary}`,
+              "Authorization": `Bearer ${common_vendor.i.getStorageSync("token")}`
+              // 如果需要鉴权
+            },
+            data: bodyBuffer.buffer,
+            responseType: "text",
+            success(uploadRes) {
+              console.log("上传成功:", uploadRes.data);
+            },
+            fail(err) {
+              console.error("上传失败:", err);
+            }
+          });
+        },
+        fail(err) {
+          console.error("读取文件失败12312:", err);
         }
       });
     };
@@ -120,8 +120,10 @@ const _sfc_main = /* @__PURE__ */ common_vendor.b({
         return;
       }
       let res = await api_article.a(article.value);
-      console.log("返回数据", res);
+      console.log("返回数据", res.data.split(".")[1]);
       if (res.msg === "ok") {
+        articleId.value = res.data.split(".")[1];
+        handleCoverImageUploadF(articleId.value, coverImage.value);
         common_vendor.i.showToast({
           title: "发布成功",
           icon: "success"
