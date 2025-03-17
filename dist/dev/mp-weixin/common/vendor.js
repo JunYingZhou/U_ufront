@@ -5673,8 +5673,7 @@ function handleSetupResult(instance, setupResult, isSSR) {
   }
   finishComponentSetup(instance, isSSR);
 }
-let compile;
-const isRuntimeOnly = () => !compile;
+const isRuntimeOnly = () => true;
 function finishComponentSetup(instance, isSSR, skipOptions) {
   const Component2 = instance.type;
   if (!instance.render) {
@@ -7655,7 +7654,6 @@ const createSubpackageApp = initCreateSubpackageApp();
   wx.createPluginApp = global.createPluginApp = createPluginApp;
   wx.createSubpackageApp = global.createSubpackageApp = createSubpackageApp;
 }
-var isVue2 = false;
 function set$1(target, key, val) {
   if (Array.isArray(target)) {
     target.length = Math.max(target.length, key);
@@ -7673,8 +7671,8 @@ function del(target, key) {
   delete target[key];
 }
 /*!
-* pinia v2.2.4
-* (c) 2024 Eduardo San Martin Morote
+* pinia v2.3.1
+* (c) 2025 Eduardo San Martin Morote
 * @license MIT
 */
 let activePinia;
@@ -7753,7 +7751,7 @@ function createPinia() {
       }
     },
     use(plugin2) {
-      if (!this._a && !isVue2) {
+      if (!this._a && true) {
         toBeInstalled.push(plugin2);
       } else {
         _p.push(plugin2);
@@ -7768,7 +7766,7 @@ function createPinia() {
     _s: /* @__PURE__ */ new Map(),
     state
   });
-  if (typeof Proxy !== "undefined") {
+  if (IS_CLIENT && typeof Proxy !== "undefined") {
     pinia.use(devtoolsPlugin);
   }
   return pinia;
@@ -8196,6 +8194,7 @@ Found in store "${store.$id}".`);
   isSyncListening = true;
   return store;
 }
+/*! #__NO_SIDE_EFFECTS__ */
 // @__NO_SIDE_EFFECTS__
 function defineStore(idOrOptions, setup, setupOptions) {
   let id;

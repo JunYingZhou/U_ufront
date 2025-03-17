@@ -1,8 +1,8 @@
 "use strict";
 const utils_http = require("../utils/http.js");
-const getArticleList = () => {
+const getArticleList = (id) => {
   return utils_http.r({
-    url: "/anti/article/list",
+    url: `/anti/article/list/${id}`,
     method: "get"
   });
 };

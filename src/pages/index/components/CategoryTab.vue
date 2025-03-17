@@ -14,17 +14,25 @@ interface CategoryListType {
 
 // 使用 ref 定义一个字符串数组
 const lists = ref<CategoryListType[]>([{
-  categoryId: 0,
+  categoryId: 100,
   categoryName: '全部',
   createTime: '',
   modifyTime: ''
 }])
-const catgoryIndex = ref(0)
+const catgoryIndex = ref(100)
 
 onMounted(() => {
   // 获取文章列表
   getList();
 })
+
+// const props = defineProps<{
+//   updateList: (categoryId: number) => void;
+// }>()
+
+const emits = defineEmits<{
+  (event: "updateList", categoryId: number): void;
+}>();
 
 // 下拉刷新
 onPullDownRefresh(() => {
@@ -42,9 +50,10 @@ const getList = async () => {
   console.log('种类', lists.value)
 }
 
-const clickThisCategory = (id: number) => {
-  console.log(id)
-  catgoryIndex.value = id
+const onUpdateList = (id: number) => {
+  console.log("点击的是：", id)
+  catgoryIndex.value = id;
+  emits('updateList', id)
 }
 
 </script>
@@ -54,7 +63,7 @@ const clickThisCategory = (id: number) => {
   <view class="container">
     <view class="category-list">
       <view class="category-item" :class="{ active: catgoryIndex === item.categoryId }" v-for="item in lists"
-        :key="item.categoryId" @click="clickThisCategory(item.categoryId)">
+        :key="item.categoryId" @click="onUpdateList(item.categoryId)">
         <text class="category-name">{{ item.categoryName }}</text>
       </view>
     </view>

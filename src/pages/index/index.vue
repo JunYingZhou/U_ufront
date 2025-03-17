@@ -10,13 +10,12 @@
   <view class="container">
     <view class="header">
       <CustomNavbar></CustomNavbar>
-      <CategoryTab></CategoryTab>
+      <CategoryTab @updateList="handleUpdateList"></CategoryTab>
     </view>
     <!-- <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }"> -->
     <view class="content">
       <!-- 设置瀑布流屏幕列表 -->
-      <WaterFallList></WaterFallList>
-
+      <WaterFallList :categoryId="categoryId"></WaterFallList>
     </view>
   </view>
 </template>
@@ -31,6 +30,7 @@ import WaterFallList from '@/pages/index/components/WaterFallList.vue';
 // import { useRouter } from 'vue-router'
 
 // const router = useRouter()
+let categoryId = ref<number>(100)
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -56,6 +56,11 @@ onLoad(() => {
     title: '欢迎来到Wisson充电机器人',
   });
 })
+
+const handleUpdateList = (id: number) => {
+  console.log('更新列表', id);
+  categoryId.value = id
+}
 
 const goToLogin = () => {
   console.log('跳转到我的'); // 确认函数被调用

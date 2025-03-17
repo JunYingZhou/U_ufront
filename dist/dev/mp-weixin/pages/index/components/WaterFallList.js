@@ -6,6 +6,9 @@ if (!Math) {
 const WaterFallListItem = () => "./WaterFallListItem.js";
 const _sfc_main = /* @__PURE__ */ common_vendor.b({
   __name: "WaterFallList",
+  props: {
+    categoryId: {}
+  },
   setup(__props) {
     common_vendor.i.getSystemInfoSync().windowHeight;
     const flowData = common_vendor.g({
@@ -14,19 +17,30 @@ const _sfc_main = /* @__PURE__ */ common_vendor.b({
       // 默认两列
       columnSpace: 2
     });
+    const props = __props;
+    common_vendor.z(
+      () => props.categoryId,
+      (newVal, oldVal) => {
+        if (newVal !== oldVal) {
+          console.log("categoryId changed:", newVal);
+          getList(newVal);
+        }
+      }
+    );
     common_vendor.o(() => {
-      getList();
+      getList(props.categoryId);
     });
     common_vendor.y(() => {
       console.log("下拉刷新");
       setTimeout(() => {
-        getList();
+        getList(props.categoryId);
         common_vendor.i.stopPullDownRefresh();
       }, 1e3);
     });
-    const getList = async () => {
+    const getList = async (categoryId) => {
       try {
-        const res = await api_article.g();
+        console.log("Fetching article list...", categoryId);
+        const res = await api_article.g(categoryId);
         flowData.list = res.data || [];
         console.log("Article List:", flowData.list);
         initData();

@@ -11,7 +11,8 @@ const WaterFallList = () => "./components/WaterFallList.js";
 const _sfc_main = /* @__PURE__ */ common_vendor.b({
   __name: "index",
   setup(__props) {
-    common_vendor.i.getSystemInfoSync();
+    let categoryId = common_vendor.r(100);
+    const { safeAreaInsets } = common_vendor.i.getSystemInfoSync();
     common_vendor.h(() => {
       const userStore = stores_modules_userStore.u();
       console.log(userStore.isLogin);
@@ -28,8 +29,17 @@ const _sfc_main = /* @__PURE__ */ common_vendor.b({
         title: "欢迎来到Wisson充电机器人"
       });
     });
+    const handleUpdateList = (id) => {
+      console.log("更新列表", id);
+      categoryId.value = id;
+    };
     return (_ctx, _cache) => {
-      return {};
+      return {
+        a: common_vendor.f(handleUpdateList),
+        b: common_vendor.p({
+          categoryId: common_vendor.u(categoryId)
+        })
+      };
     };
   }
 });

@@ -20,24 +20,43 @@ const flowData = reactive<FlowData>({
   columnSpace: 2,
 });
 
+
+
+const props = defineProps<{
+  categoryId: number;
+}>();
+
+// watch
+import { watch } from 'vue'; // 引入 watch 函数
+watch(
+  () => props.categoryId,
+  (newVal, oldVal) => {
+    if (newVal!== oldVal) {
+      console.log('categoryId changed:', newVal);
+      getList(newVal);
+    }
+  }
+);
+
 // 页面挂载时获取数据
 onMounted(() => {
-  getList();
+  getList(props.categoryId);
 });
 
 // 下拉刷新
 onPullDownRefresh(() => {
   console.log('下拉刷新');
   setTimeout(() => {
-    getList();
+    getList(props.categoryId);
     uni.stopPullDownRefresh();
   }, 1000);
 });
 
 // 获取文章列表
-const getList = async () => {
+const getList = async (categoryId: number) => {
   try {
-    const res: any = await getArticleList();
+    console.log('Fetching article list...', categoryId);
+    const res: any = await getArticleList(categoryId);
     flowData.list = res.data || [];
     console.log('Article List:', flowData.list);
     initData(); // 调用 initData 函数进行分组初始化

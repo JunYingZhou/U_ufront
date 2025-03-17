@@ -12,9 +12,9 @@ import request from '@/utils/http'
 /**
  * 获取文章列表
  */
-export const getArticleList = () => {
+export const getArticleList = (id: number) => {
   return request({
-    url: '/anti/article/list',
+    url: `/anti/article/list/${id}`,
     method: 'get',
   })
 }

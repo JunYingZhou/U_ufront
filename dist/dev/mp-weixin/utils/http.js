@@ -1,6 +1,6 @@
 "use strict";
 const common_vendor = require("../common/vendor.js");
-const base_url = "http://localhost:8000";
+const base_url = "http://192.168.1.199:8000";
 const timeout = 5e3;
 const request = (params) => {
   console.log(params);
