@@ -1,1 +1,0 @@
-<view wx:if="{{a}}" class="container data-v-276ac604"><head-info wx:if="{{b}}" class="data-v-276ac604" u-i="276ac604-0" bind:__l="__l" u-p="{{b}}"></head-info><user-item class="data-v-276ac604" u-i="276ac604-1" bind:__l="__l"></user-item></view><view class="logout-button data-v-276ac604" bindtap="{{c}}"> 退出登录 </view>

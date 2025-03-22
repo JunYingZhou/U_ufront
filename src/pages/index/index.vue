@@ -2,7 +2,7 @@
  * @Author: zjy 3497577844@qq.com
  * @Date: 2024-08-15 02:07:10
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-11-16 19:20:31
+ * @LastEditTime: 2025-03-18 21:13:42
  * @FilePath: \uni-preset-vue\src\pages\index\index.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -10,13 +10,12 @@
   <view class="container">
     <view class="header">
       <CustomNavbar></CustomNavbar>
-      <CategoryTab></CategoryTab>
+      <CategoryTab @updateList="handleUpdateList"></CategoryTab>
     </view>
     <!-- <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }"> -->
     <view class="content">
       <!-- 设置瀑布流屏幕列表 -->
-      <WaterFallList></WaterFallList>
-
+      <WaterFallList :categoryId="categoryId"></WaterFallList>
     </view>
   </view>
 </template>
@@ -31,6 +30,7 @@ import WaterFallList from '@/pages/index/components/WaterFallList.vue';
 // import { useRouter } from 'vue-router'
 
 // const router = useRouter()
+let categoryId = ref<number>(100)
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -56,6 +56,11 @@ onLoad(() => {
     title: '欢迎来到Wisson充电机器人',
   });
 })
+
+const handleUpdateList = (id: number) => {
+  console.log('更新列表', id);
+  categoryId.value = id
+}
 
 const goToLogin = () => {
   console.log('跳转到我的'); // 确认函数被调用

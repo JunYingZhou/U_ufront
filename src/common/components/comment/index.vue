@@ -59,7 +59,7 @@
 						</view>
 						<view class="comment-main-foot">
 							<view class="foot-time">{{item.createTime}}</view>
-							<view class="foot-btn" @click="reply(item.nickename,item.nickename,item.commentId)">回复</view>
+							<view class="foot-btn" @click="reply(item.nickname,item.nickname,item.commentId, item.userId)">回复</view>
 							<view class="foot-btn" v-if="false" @click="confirmDelete(item.commentId)">删除</view>
 						</view>
 						<!-- 父评论体-end -->
@@ -92,7 +92,7 @@
 									</view>
 									<view class="comment-main-foot">
 										<view class="foot-time">{{each.createTime}}</view>
-										<view class="foot-btn" @click="reply(item.nickname,each.nickname,item.commentId)">
+										<view class="foot-btn" @click="reply(item.nickname,each.nickname,item.commentId, item.userId)">
 											回复</view>
 										<view class="foot-btn" v-if="each.owner" @click="confirmDelete(each.commentId)">删除
 										</view>
@@ -137,8 +137,9 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, onMounted } from 'vue';
+import { ref, watch, nextTick, onMounted, onUpdated, onUnmounted } from 'vue';
 import { queryAllCommentByArticle } from '@/api/comment.ts';
+import { onLaunch, onShow, onHide, onLoad } from "@dcloudio/uni-app";
 const props = defineProps({
   cmData: {
     type: Object,
@@ -153,13 +154,12 @@ const props = defineProps({
 	default: 0
   }
 });
-
 const emit = defineEmits(['del', 'add', 'like', 'focusOn']);
 
 const emptyAvatar = ref("http://117.72.78.239:9000/zjyminio/defaultAvatar.webp");
 const commentData = ref(null);
 const placeholder = ref("请输入评论");
-const commentReq = ref({ pId: null, content: null });
+const commentReq = ref({ pId: null, content: null, commentContent: null });
 const pUser = ref(null);
 const showTag = ref(false);
 const focus = ref(false);
@@ -178,12 +178,20 @@ watch(
 
 onMounted(() => {
 	console.log('文章id', props.articleId);
-	
+	uni.$on('fetchDataOperation', (data) => {
+		console.log('fetchDataOperation', data);
+		if(data === 1){
+			init();
+		}
+	})
   uni.onKeyboardHeightChange(res => {
     KeyboardHeight.value = res.height;
   });
 });
 
+onUnmounted(() => {
+    uni.$off('fetchDataOperation', handleFetchDataOperation);
+});
 
 async function init(newVal) {
   let res = await queryAllCommentByArticle(props.articleId)
@@ -195,11 +203,16 @@ async function init(newVal) {
   }
 }
 
-function reply(pUserVal, reUser, pId) {
+function reply(pUserVal, reUser, pId, toUserId) {
+	console.log('pUserVal', pUserVal, 'reUser', reUser, 'pId', pId, 'toUserId', toUserId);
   pUser.value = pUserVal;
   commentReq.value.pId = pId;
   commentReq.value.content = reUser ? `@${reUser} ` : '';
+  commentReq.value.commentContent = reUser ? `@${reUser} ` : '';
   showTag.value = true;
+  // 获取当前评论的userId
+  commentReq.value.toUserId = reUser ? toUserId : null;
+  console.log('当前评论', commentReq.value);
   commentInput();
 }
 
@@ -238,7 +251,10 @@ function add() {
     uni.showToast({ title: '评论内容过短', duration: 2000 });
     return;
   }
+  console.log('commentReq', commentReq.value);
   emit('add', commentReq.value);
+//   init();
+  closeInput();
 }
 
 function like(commentId) {
@@ -301,9 +317,7 @@ function tagClose() {
   commentReq.value.pId = null;
 }
 
-function commentInput() {
-  console.log("asdadasdasd");
-  
+function commentInput() {  
   submit.value = true;
   nextTick(() => {
     focus.value = true;
@@ -311,8 +325,14 @@ function commentInput() {
 }
 
 function closeInput() {
-  focus.value = false;
-  submit.value = false;
+	commentReq.value.content = null;
+	commentReq.value.pId = null;
+	commentReq.value.commentContent = null;
+	commentReq.value.toUserId = null;
+	commentReq.value.toUserNam = null;
+	commentReq.value.commentId = null;
+  	focus.value = false;
+  	submit.value = false;
 }
 </script>
 

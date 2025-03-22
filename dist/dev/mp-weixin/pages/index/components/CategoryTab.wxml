@@ -1,1 +1,0 @@
-<view class="container data-v-2c8bfe96"><view class="category-list data-v-2c8bfe96"><view wx:for="{{a}}" wx:for-item="item" wx:key="c" class="{{['category-item', 'data-v-2c8bfe96', item.b && 'active']}}" bindtap="{{item.d}}"><text class="category-name data-v-2c8bfe96">{{item.a}}</text></view></view></view>

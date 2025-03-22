@@ -244,6 +244,7 @@ const submitArticle = async () => {
     if (res.msg === 'ok') {
         articleId.value = res.data.split('.')[1]
         handleCoverImageUploadF(articleId.value, coverImage.value);
+        handleContentImagesUploadF(articleId.value, contentImages);
         uni.showToast({
             title: '发布成功',
             icon: 'success'
