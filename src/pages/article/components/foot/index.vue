@@ -15,7 +15,7 @@
                 <view class="close">
                     <text class="close-text" @click="closePopup">关闭</text>
                 </view>
-                <comment ref="hbComment"  @add="add" :articleId="props.articleId"></comment>
+                <comment ref="hbComment" @like="commentLike"  @add="add" :articleId="props.articleId"></comment>
             </view>
         </view>
     </view>
@@ -25,7 +25,7 @@
 import { ref, onMounted, watch } from 'vue';
 import comment from '@/common/components/comment/index.vue'
 import { getArticleLikeStarStatus, insertArticleLikeStarStatus } from "@/api/article";
-import { addComment } from "@/api/comment";
+import { addComment, addCommentLike } from "@/api/comment";
 let showPopup = ref(false);
 import { useUserStore } from "@/stores";
 
@@ -50,17 +50,17 @@ const props = defineProps({
 })
 
 
-watch(
-    () => fetchData.value,
-    (newVal, oldVal) => {
-        console.log('watch: newVal', newVal);
-        console.log('watch: oldVal', oldVal);
-        if(newVal === 1){
-            console.log('fetchData value is 1, emitting event');
-            uni.$emit('fetchDataOperation', newVal);
-        }
-    }
-)
+// watch(
+//     () => fetchData.value,
+//     (newVal, oldVal) => {
+//         console.log('watch: newVal', newVal);
+//         console.log('watch: oldVal', oldVal);
+//         if(newVal === 1){
+//             console.log('fetchData value is 1, emitting event');
+//             uni.$emit('fetchDataOperation', newVal);
+//         }
+//     }
+// )
 
 onMounted(() => {
     console.log("foot",props.articleId);
@@ -69,6 +69,26 @@ onMounted(() => {
 
 const closePopup = () => {
     showPopup.value = false;
+}
+
+const commentLike = (e: any) => {
+    console.log('评论点赞', e)
+    let userId = userStore.getUserId;
+    // request api
+    addCommentLike(e, userId, props.articleId)
+    .then((res: any) => {
+        console.log('评论点赞结果', res);
+        // insert into db
+        // fetchData.value = 1;
+        uni.$emit('fetchDataOperation', 1);
+        uni.showToast({
+            title: "点赞成功",
+            duration: 1000,
+        })
+    })
+    .catch((error: any) => {
+        console.error('评论点赞失败', error);
+    });
 }
 
 const add = async(e: any) => {

@@ -2,7 +2,7 @@
  * @Author: zjy 3497577844@qq.com
  * @Date: 2024-11-02 12:28:51
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2024-11-16 19:15:42
+ * @LastEditTime: 2025-03-30 16:49:09
  * @FilePath: \uniapp_template\src\api\user.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -33,6 +33,15 @@ export const addUser = (params: any) => {
   return request({
     url: '/system/user',
     method: 'post',
+    data: params,
+  })
+}
+
+// 修改用户（系统）
+export const UpdateUser = (id: any, params: any) => {
+  return request({
+    url: `/system/user/${id}`,
+    method: 'put',
     data: params,
   })
 }

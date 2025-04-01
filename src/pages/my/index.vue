@@ -31,9 +31,20 @@ onLoad(() => {
   getUserInfoF();
 })
 
+onMounted(() => {
+  uni.$on('refreshPersonalInfo', (data: any) => {
+        console.log('子组件接收到的事件', data);
+        getUserInfoF();
+    })})
+
+onUnmounted(() => {
+  console.log('解除绑定')
+  uni.$off('refreshPersonalInfo')
+})
+
 const getUserInfoF = async() => {
   // 获取我的信息
-  console.log('userId -->',userId.value)
+  console.log('userId MY -->',userId.value)
   const user: any = await getUserInfo(userId.value)
   userInfo = user?.data
   userStore.saveUserInfo(userInfo)

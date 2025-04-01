@@ -2,7 +2,7 @@
  * @Author: zjy 3497577844@qq.com
  * @Date: 2024-08-15 02:07:10
  * @LastEditors: zjy 3497577844@qq.com
- * @LastEditTime: 2025-03-18 20:14:13
+ * @LastEditTime: 2025-04-02 00:50:09
  * @FilePath: \uni-preset-vue\src\utils\http.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -43,16 +43,35 @@ export default (params: any) => {
 				const res: any = response
 				// 根据返回的状态码做出对应的操作
 				//获取成功
+				console.log('请求层',res);
 				if (res.statusCode == 200) {
-					if(res.data.code == 200 || res.data.code == 0) {
-						resolve(res.data);
-					}
-					else {
+					if(res.data.code == '200' || res.data.code == 0 || res.data.code === "1") {
+						if(res.data.msg == 'ok') {
+							console.log('请求成功',res.data);
+							resolve(res.data);
+						}else {
+							uni.showToast({
+								title: res.data.msg,
+								duration: 2000,	
+							})
+							uni.clearStorageSync()
+							uni.showModal({
+								title: "提示",
+								content: "错误，请联系管理员",
+								showCancel: false,
+								success() {
+									uni.reLaunch({
+										url: "/pages/login/index",
+									})
+								},
+							});
+						}
+					} else {
 						// 将res.data.code转成数字
 						const code = Number(res.data.code);
-						uni.clearStorageSync()
 						switch (code) {
 							case 401:
+								uni.clearStorageSync()
 								uni.showModal({
 									title: "提示",
 									content: "请登录",
