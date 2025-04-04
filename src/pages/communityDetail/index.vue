@@ -58,8 +58,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-
+import { ref, onMounted } from "vue";
+import { queryCommunityList } from '@/api/community'
+import { onLoad } from "@dcloudio/uni-app";
+// import 
 // 当前选项卡
 const activeTab = ref<"posts" | "qa">("posts");
 
@@ -85,11 +87,23 @@ const posts = ref([
     }
 ]);
 
+const communityId = ref<any>(0) // 社区详细数据
 // 社区问答数据（假数据）
 const questions = ref([
     { id: 1, question: "如何分辨刷单骗局？", answer: "高回报低风险的兼职一般都是骗局，谨防被骗。" },
     { id: 2, question: "被骗了该怎么办？", answer: "立即拨打110报警，并联系银行冻结相关资金。" }
 ]);
+
+onLoad((option: any) => {
+    console.log('社区页面加载', option) 
+    option && (communityId.value = option.communityId)
+})
+
+
+onMounted(async () => {
+   let res = await queryCommunityList(communityId.value)
+   console.log('社区详细数据',res) 
+})
 </script>
 
 <style scoped>

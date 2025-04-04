@@ -63,6 +63,7 @@
     "axios-adapter-uniapp": "^0.1.4",
     "crypto-js": "^4.2.0",
     "jsencrypt": "^3.3.2",
+    "marked": "^15.0.7",
     "minio": "^8.0.3",
     "pinia": "^2.2.1",
     "pinia-plugin-persistedstate": "^3.2.1",

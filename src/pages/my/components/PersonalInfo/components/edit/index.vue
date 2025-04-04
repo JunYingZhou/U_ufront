@@ -142,7 +142,7 @@ const uploadAvatar = () => {
 const getUserInfoF = async() => {
   // 获取我的信息
   console.log('userId -->',userInfo.id);
-  const user: any = await getUserInfo(userInfo.id)
+  const user: any = await getUserInfo(userStore.getUserId)
   userInfo = user?.data
   onGenderConfirm(userInfo.gender)
   userStore.saveUserInfo(userInfo)

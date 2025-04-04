@@ -45,7 +45,7 @@ onUnmounted(() => {
 const getUserInfoF = async() => {
   // 获取我的信息
   console.log('userId MY -->',userId.value)
-  const user: any = await getUserInfo(userId.value)
+  const user: any = await getUserInfo(userStore.getUserId || uni.getStorageSync('userId'))
   userInfo = user?.data
   userStore.saveUserInfo(userInfo)
   dataLoading.value = true

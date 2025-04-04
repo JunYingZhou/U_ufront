@@ -1,3 +1,11 @@
+<!--
+ * @Author: zjy 3497577844@qq.com
+ * @Date: 2025-02-09 17:09:35
+ * @LastEditors: zjy 3497577844@qq.com
+ * @LastEditTime: 2025-04-04 19:28:24
+ * @FilePath: \u_uf\src\pages\my\components\UserItem\index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
     <view class="container">
         <view class="item" v-for="item in items" :key="item.id" @click="toUrl(item.url)">
@@ -19,6 +27,7 @@ const items = reactive([
     { id: 1, icon: "http://117.72.78.239:9000/zjyminio/establish.png", url: "/pages/establish/index", name: "发布文章" },
     { id: 2, icon: "http://117.72.78.239:9000/zjyminio/community.png", url: "", name: "我的社区" },
     { id: 3, icon: "http://117.72.78.239:9000/zjyminio/star.png", url: "/pages/star/index", name: "我的收藏" },
+    { id: 4, icon: "http://117.72.78.239:9000/zjyminio/star.png", url: "/pages/AbilityAnalysis/index", name: "能力检测" },
 ]);
 
 
