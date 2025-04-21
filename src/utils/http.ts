@@ -10,7 +10,7 @@
 // const base_url = 'http://47.115.50.181:8080'
 const base_url = 'http://localhost:8000'
 // 请求超出时间
-const timeout = 5000
+const timeout = 20000
 
 // 需要修改token，和根据实际修改请求头
 export default (params: any) => {

@@ -3,7 +3,9 @@ import { onMounted, reactive, ref } from 'vue'
 import { getCategoryList } from '@/api/category'
 import { onPullDownRefresh } from '@dcloudio/uni-app';
 const windowHeight = uni.getSystemInfoSync().windowHeight; // 获取屏幕高度
+import { useCategoryStore } from "@/stores";
 
+const categoryStore = useCategoryStore()
 // 定义 flowData 的类型
 interface CategoryListType {
   categoryId: number;
@@ -47,6 +49,7 @@ onPullDownRefresh(() => {
 
 const getList = async () => {
   const res: any = await getCategoryList()
+  categoryStore.saveCategoryInfo(res.data)
   lists.value.push(...res.data)
   console.log('种类', lists.value)
 }
