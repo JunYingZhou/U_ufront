@@ -40,7 +40,7 @@ const handleItemClick = (item: any) => {
   delete obj.articleCoverUrl;
   console.log('Item clicked:', obj);
   uni.navigateTo({
-    url: `/pages/article/index?article=${JSON.stringify(obj)}`,     
+    url: `/pages/article/index?articleId=${obj.id}`,     
   });
   // 可以添加跳转或弹窗逻辑
 };

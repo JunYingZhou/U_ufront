@@ -112,14 +112,17 @@ const fetchArticleFile = async (articleId: number) => {
 };
 
 onLoad(async (options: any) => {
-  if (options.article && typeof options.article === "string") {
-    const obj = await parseArticleData(options.article);
+  // if (options.articleId && typeof options.articleId === "number") {
+    console.log("原始的文章数据:", options.articleId);
+    // const obj = await parseArticleData(options.article);
+    const obj: any = await getArticleById(options.articleId || 1);
+    console.log("解析后的文章数据123:", obj);
     if (obj) {
-      Object.assign(articleObj, obj);
-      console.log("解析后的文章数据:", articleObj);
+      Object.assign(articleObj, obj.data);
+      console.log("解析后的文章数据123123:", articleObj);
       let promiseList = [
-        fetchArticleUrl(articleObj.id),
-        fetchArticleFile(articleObj.id),
+        fetchArticleUrl(obj.data.id),
+        fetchArticleFile(obj.data.id),
       ];
       let res: any[] = await Promise.all(promiseList);
       if (res) {
@@ -130,9 +133,9 @@ onLoad(async (options: any) => {
       }
       console.log("获取图片", articleObj);
     }
-  } else {
-    console.error("无效的文章数据:", options.article);
-  }
+  // } else {
+  //   console.error("无效的文章数据:", options.article);
+  // }
 });
 
 // 新增：在组件挂载后获取 foot 组件的高度

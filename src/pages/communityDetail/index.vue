@@ -164,7 +164,8 @@ const init = async() => {
 
 const toDetail = (item: any) => {
     console.log('文章详情', item)
-    uni.navigateTo({ url: `/pages/article/index?article=${JSON.stringify(item)}` })
+    // uni.navigateTo({ url: `/pages/article/index?article=${JSON.stringify(item)}` })
+    uni.navigateTo({ url: `/pages/article/index?articleId=${item.id}` })
 }
 
 const toQDetail = (item: any) => {
@@ -206,7 +207,7 @@ const cancelQuestion = () => {
 
 const postArticle = () => {
     if(activeTab.value == 'posts') {
-        uni.navigateTo({ url: `/pages/establish/index?from=${1}&communityId=${communityId.value}` })
+        uni.redirectTo({ url: `/pages/establish/index?from=${1}&communityId=${communityId.value}` })
     }else {
         isShowQuestionModal.value = true
     }
