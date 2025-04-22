@@ -18,3 +18,14 @@ export const getAdvise = (data: any) => {
     data: data,
   })
 }
+
+
+export const addUserChatResult = (data: any) => {
+  return request({
+    url: `/anti/chat/addChatInfo`,
+    method: 'post',
+    data: data,
+  })
+}
+
+

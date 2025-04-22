@@ -104,6 +104,7 @@ onMounted(async () => {
 const joinCommunity = (communityId: number) => {
     // TODO: 加入社区
     uni.navigateTo({ url: `/pages/communityDetail/index?communityId=${communityId}` });
+    
 }
 
 </script>

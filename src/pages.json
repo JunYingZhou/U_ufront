@@ -67,6 +67,12 @@
 			}
 		},
 		{
+			"path": "pages/QA/index",
+			"style": {
+				"navigationBarTitleText": "问答页"
+			}
+		},
+		{
 			"path": "pages/star/index",
 			"style": {
 				"navigationBarTitleText": "我的收藏"

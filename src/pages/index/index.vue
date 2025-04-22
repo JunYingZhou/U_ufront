@@ -53,7 +53,8 @@ onLoad(() => {
   }
   uni.showToast({
     icon: 'none',
-    title: '欢迎来到Wisson充电机器人',
+    // title: '欢迎来到Wisson充电机器人',
+    title: '欢迎',
   });
 })
 

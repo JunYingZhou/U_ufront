@@ -39,6 +39,13 @@ export const getArticleFileByArticleId = (articleId: number) => {
   })
 }
 
+export const getArticleLikeCount = (id: number) => {
+  return request({
+    url: `/anti/article/getArticleLikeStarStatusCount/${id}/${'like'}`,
+    method: 'get',
+  })
+}
+
 /**
  * 新增文章列表
  */
@@ -56,6 +63,13 @@ export const addArticle = (params: any) => {
 export const getArticleLikeStarStatus = (queryIds: any, type: any) =>{
   return request({
     url: `/anti/article/getArticleLikeStarStatus/${queryIds}/${type}`,
+    method: 'get',
+  })
+}
+
+export const getArticleCommentCount = (queryIds: any) =>{
+  return request({
+    url: `/anti/article/getArticleCommentCount/${queryIds}`,
     method: 'get',
   })
 }

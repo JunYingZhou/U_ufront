@@ -1,8 +1,8 @@
 <template>
     <view class="container">
         <!-- 面积图 -->
-        <view class="chart-title">能力趋势分析 - 题目表现</view>
-        <qiun-data-charts type="area" :chartData="areaOpts" />
+        <!-- <view class="chart-title">能力趋势分析 - 题目表现</view>
+        <qiun-data-charts type="area" :chartData="areaOpts" /> -->
         <!-- 饼图 -->
         <view class="chart-title">答题分布 - 正确率统计</view>
         <qiun-data-charts type="pie" :chartData="pieOpts" />
@@ -36,16 +36,22 @@ const pieOpts = ref<any>({
 
 // 从 Markdown 中提取 JSON 的函数
 function extractChartOption(markdown: string) {
-    const jsonMatch = markdown.match(/```json\n([\s\S]*?)\n```/);
-    if (jsonMatch && jsonMatch[1]) {
-        try {
-            return JSON.parse(jsonMatch[1]);
-        } catch (e) {
-            console.error("JSON 解析错误:", e);
-            return {};
-        }
+  // 匹配 ```json ... ``` 或 markdown 中标记为 json 的多行代码块
+  const jsonMatch = markdown.match(/```json\s*([\s\S]*?)\s*```/);
+
+  if (jsonMatch && jsonMatch[1]) {
+    try {
+      const jsonStr = jsonMatch[1].trim();
+      console.log("提取的 JSON 字符串111:", jsonStr);
+      console.log("提取的 JSON 字符串111:", JSON.parse(jsonStr));
+      return JSON.parse(jsonStr);
+    } catch (e) {
+      console.error("JSON 解析错误:", e);
+      return {};
     }
-    return {};
+  }
+
+  return {};
 }
 
 // 新增折线图转换函数
@@ -101,7 +107,7 @@ function convertEChartsToPieData(echartsOption: any) {
                 data: series.data.map((item: any) => ({
                     name: item.name,
                     value: item.value,
-                    color: item.color || (item.name === '优点' ? 'green' : 'red'),
+                    color: item.name === '优点' ? '#67C23A' : '#F56C6C',
                 })),
             }],
             extra: {
@@ -109,21 +115,24 @@ function convertEChartsToPieData(echartsOption: any) {
                     labelShow: true,
                     labelWidth: 20,
                     activeRadius: 10,
+                    labelType: 'circle'
                 },
                 legend: {
                     show: true,
-                    position: 'top',
-                    float: 'center',
+                    position: 'bottom',
+                    fontSize: 14
                 },
                 tooltip: {
                     show: true,
+                    format: '{b} : {d}%'
                 },
             },
             title: {
-                name: echartsOption.title?.text || '总体答题比例',
-                fontSize: 16,
-                color: '#333',
+                name: '能力分布比例',
+                fontSize: 18,
+                color: '#2c3e50',
             },
+            animation: true
         };
     }
     return { series: [] };
@@ -196,8 +205,10 @@ function initializeChart() {
     data.value = marked.parse(analysisSection);
     const echartsOption = extractChartOption(markdownContent);
     
-    areaOpts.value = convertToAreaData(echartsOption);
+    // 调试输出
+    console.log('处理后的饼图配置:', JSON.stringify(echartsOption));
     pieOpts.value = convertEChartsToPieData(echartsOption);
+    console.log('最终饼图选项:', JSON.stringify(pieOpts.value));
 }
 const initWS1 = () => {
     // 初始化 WebSocket 连接
@@ -235,6 +246,7 @@ onLoad((options: any) => {
     console.log('!!!!!!', options);
     try {
         const item = JSON.parse(decodeURIComponent(options.advise));
+        console.log('解析后的 options.advise:', item);
         AdviseData.value = item;
     } catch (error) {
         console.error('解析 options.advise 出错:', error);
@@ -297,24 +309,6 @@ onMounted(() => {
       console.log('收到服务器内容：' + res.data); 
     })
 });
-
-// // 初始化图表逻辑
-// function initializeChart() {
-//     if (!AdviseData.value) return;
-//     const markdownContent = AdviseData.value;
-//     const analysisSection = markdownContent.split('---')[0];
-//     data.value = marked.parse(analysisSection);
-//     const echartsOption = extractChartOption(markdownContent);
-//     console.log('ECharts option --->', JSON.stringify(echartsOption));
-
-//     // 转换为 qiun-data-charts 格式
-//     // 由于提供的数据是饼图，这里主要用饼图转换函数
-//     pieOpts.value = convertEChartsToPieData(echartsOption);
-//     // 若原 ECharts 配置有适合柱状图的数据，再调用柱状图转换函数
-//     columnOpts.value = convertEChartsToColumnData(echartsOption);
-//     console.log('Column opts --->', JSON.stringify(columnOpts.value));
-//     console.log('Pie opts --->', JSON.stringify(pieOpts.value));
-// }
 
 // 下拉刷新
 onPullDownRefresh(() => {

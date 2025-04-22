@@ -1,5 +1,5 @@
 <template>
-    <view class="community-container">
+    <view class="community-container" v-if="!loading">
         <!-- 社区信息 -->
         <view class="community-header">
             <image class="community-image" src="http://117.72.78.239:9000/zjyminio/OIP.jpg" />
@@ -29,13 +29,13 @@
         <view v-if="activeTab === 'posts'">
             <view class="post-list">
                 <view class="post-item" v-for="post in posts" :key="post.id">
-                    <image class="user-avatar" :src="post.avatar" />
-                    <view class="post-content">
+                    <image class="user-avatar" :src="post.articleCoverUrl" />
+                    <view class="post-content" @click="toDetail(post)">
                         <text class="user-name">{{ post.username }}</text>
-                        <text class="post-title">{{ post.title }}</text>
-                        <text class="post-abstract">{{ post.abstract }}</text>
+                        <text class="post-title">{{ post.articleTitle }}</text>
+                        <text class="post-abstract">{{ post.articleAbstract }}</text>
                         <view class="post-footer">
-                            <text class="likes">👍 {{ post.likes }}</text>
+                            <text class="likes">👍 {{ post.articleLikeCount }}</text>
                             <text class="comments">💬 {{ post.comments }}</text>
                         </view>
                     </view>
@@ -46,53 +46,94 @@
         <view v-if="activeTab === 'qa'">
             <view class="qa-list">
                 <view class="qa-item" v-for="qa in questions" :key="qa.id">
-                    <text class="qa-question">Q: {{ qa.question }}</text>
-                    <text class="qa-answer">A: {{ qa.answer }}</text>
+                    <text class="qa-question" @click="toQDetail(qa)">Q: {{ qa.questionsTitle }}</text>
+                    <text class="qa-answer">A: {{ qa.questionsTitle }}</text>
                 </view>
             </view>
         </view>
 
         <!-- 发布按钮 -->
-        <button class="post-btn">+ 发布内容</button>
+        <button class="post-btn" @click="postArticle">{{ activeTab == "posts" ? "+ 发布内容" : "+ 发布问题" }}</button>
+    </view>
+    <template v-else>
+        <view class="container-loading">
+            <!-- <view class="loading">加载中...</view> -->
+            <view class="boxes">
+                <view class="box">
+                    <view></view>
+                    <view></view>
+                    <view></view>
+                    <view></view>
+                </view>
+                <view class="box">
+                    <view></view>
+                    <view></view>
+                    <view></view>
+                    <view></view>
+                </view>
+                <view class="box">
+                    <view></view>
+                    <view></view>
+                    <view></view>
+                    <view></view>
+                </view>
+                <view class="box">
+                    <view></view>
+                    <view></view>
+                    <view></view>
+                    <view></view>
+                </view>
+            </view>
+        </view>
+    </template>
+    <view v-if="isShowQuestionModal" class="modal-mask">
+        <view class="question-modal">
+            <view class="modal-header">
+                <text class="modal-title">发布新问题</text>
+            </view>
+            <view class="modal-body">
+                <textarea 
+                    v-model="questionInput" 
+                    placeholder="请输入您的问题（至少10个字）" 
+                    class="question-input"
+                    maxlength="200"
+                    auto-height
+                />
+            </view>
+            <view class="modal-footer">
+                <button class="btn cancel" @click="cancelQuestion">取消</button>
+                <button class="btn confirm" @click="submitQuestion">提交问题</button>
+            </view>
+        </view>
     </view>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { queryCommunityList } from '@/api/community'
+import { addQuestion } from '@/api/questions'
+import { getArticleLikeCount, getArticleCommentCount } from '@/api/article'
 import { onLoad } from "@dcloudio/uni-app";
 // import 
 // 当前选项卡
 const activeTab = ref<"posts" | "qa">("posts");
 
 // 帖子数据（假数据）
-const posts = ref([
-    {
-        id: 1,
-        username: "反诈小警察",
-        avatar: "http://117.72.78.239:9000/zjyminio/shuadan1.jpg",
-        title: "揭秘刷单骗局，别再上当了！",
-        abstract: "最近很多人因为刷单被骗，我来分享一些真实案例，希望大家提高警惕！",
-        likes: 128,
-        comments: 45
-    },
-    {
-        id: 2,
-        username: "被骗的老王",
-        avatar: "http://117.72.78.239:9000/zjyminio/shuadan2.jpg",
-        title: "我被骗了5000元，如何追回？",
-        abstract: "我看到一个兼职刷单的广告，说完成任务能返利，结果转账后就被拉黑了...",
-        likes: 256,
-        comments: 89
-    }
+const posts = ref<any>([
 ]);
 
 const communityId = ref<any>(0) // 社区详细数据
 // 社区问答数据（假数据）
-const questions = ref([
-    { id: 1, question: "如何分辨刷单骗局？", answer: "高回报低风险的兼职一般都是骗局，谨防被骗。" },
-    { id: 2, question: "被骗了该怎么办？", answer: "立即拨打110报警，并联系银行冻结相关资金。" }
+const questions = ref<any>([
+    // { id: 1, question: "如何分辨刷单骗局？", answer: "高回报低风险的兼职一般都是骗局，谨防被骗。" },
+    // { id: 2, question: "被骗了该怎么办？", answer: "立即拨打110报警，并联系银行冻结相关资金。" }
 ]);
+
+const loading = ref<boolean>(false) // 加载状态
+
+const isShowQuestionModal = ref<boolean>(false) // 是否显示问题模态框
+const questionInput = ref(''); // 新增问题输入绑定
+
 
 onLoad((option: any) => {
     console.log('社区页面加载', option) 
@@ -101,9 +142,76 @@ onLoad((option: any) => {
 
 
 onMounted(async () => {
-   let res = await queryCommunityList(communityId.value)
-   console.log('社区详细数据',res) 
+    await init()
 })
+
+const init = async() => {
+    loading.value = true
+   let res: any = await queryCommunityList(communityId.value)
+   console.log('社区详细数据',res) 
+   if(res.msg == 'ok') {
+    for (const element of res.data.articleList) {
+        const res: any = await Promise.all([getArticleLikeCount(element.id), getArticleCommentCount(element.id)])
+        console.log('文章', res)
+        element.articleLikeCount = res[0].data
+        element.comments = res[1].data
+    }
+    questions.value = res.data.questionsRespList || []
+    posts.value = res.data.articleList || []
+    loading.value = false 
+   }
+}
+
+const toDetail = (item: any) => {
+    console.log('文章详情', item)
+    uni.navigateTo({ url: `/pages/article/index?article=${JSON.stringify(item)}` })
+}
+
+const toQDetail = (item: any) => {
+    console.log('文章详情', item)
+    uni.navigateTo({ url: `/pages/QA/index?question=${JSON.stringify(item)}` })
+}
+
+const submitQuestion = async() => {
+    if (questionInput.value.length < 10) {
+        uni.showToast({ title: '问题至少需要10个字', icon: 'none' });
+        return;
+    }
+    // 这里添加实际提交逻辑
+    console.log('提交问题:', questionInput.value);
+
+    let res: any = await addQuestion({
+        communityId: communityId.value,
+        questionsContent: questionInput.value,
+        questionsTitle: questionInput.value,
+        questionsState: 0,
+        questionsLikeCount: 0,
+        userId: uni.getStorageSync('userId'),
+        isDel: 0,
+    })
+
+    console.log('提交问题', res)
+
+    await init()
+
+    isShowQuestionModal.value = false;
+    questionInput.value = '';
+    
+};
+
+const cancelQuestion = () => {
+    isShowQuestionModal.value = false;
+    questionInput.value = '';
+};
+
+const postArticle = () => {
+    if(activeTab.value == 'posts') {
+        uni.navigateTo({ url: `/pages/establish/index?from=${1}&communityId=${communityId.value}` })
+    }else {
+        isShowQuestionModal.value = true
+    }
+    // pages/establish/index
+}
 </script>
 
 <style scoped>
@@ -112,6 +220,271 @@ onMounted(async () => {
     padding: 10px;
     background-color: #f8f8f8;
 }
+
+.modal-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.question-modal {
+    background: white;
+    width: 80%;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.modal-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 15px 0;
+}
+
+.question-input {
+    width: 92%;
+    min-height: 120px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.cancel {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.confirm {
+    background: #eb872a;
+    color: white;
+}
+
+.container-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.boxes {
+    --size: 32px;
+    --duration: 800ms;
+    height: calc(var(--size) * 2);
+    width: calc(var(--size) * 3);
+    position: relative;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+    margin-top: calc(var(--size) * 1.5 * -1);
+    transform: rotateX(60deg) rotateZ(45deg) rotateY(0deg) translateZ(0px);
+}
+
+.boxes .box {
+    width: var(--size);
+    height: var(--size);
+    top: 0;
+    left: 0;
+    position: absolute;
+    transform-style: preserve-3d;
+}
+
+.boxes .box:nth-child(1) {
+    transform: translate(100%, 0);
+    -webkit-animation: box1 var(--duration) linear infinite;
+    animation: box1 var(--duration) linear infinite;
+}
+
+.boxes .box:nth-child(2) {
+    transform: translate(0, 100%);
+    -webkit-animation: box2 var(--duration) linear infinite;
+    animation: box2 var(--duration) linear infinite;
+}
+
+.boxes .box:nth-child(3) {
+    transform: translate(100%, 100%);
+    -webkit-animation: box3 var(--duration) linear infinite;
+    animation: box3 var(--duration) linear infinite;
+}
+
+.boxes .box:nth-child(4) {
+    transform: translate(200%, 0);
+    -webkit-animation: box4 var(--duration) linear infinite;
+    animation: box4 var(--duration) linear infinite;
+}
+
+.boxes .box>view {
+    --background: #ec7d0f;
+    --top: auto;
+    --right: auto;
+    --bottom: auto;
+    --left: auto;
+    --translateZ: calc(var(--size) / 2);
+    --rotateY: 0deg;
+    --rotateX: 0deg;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--background);
+    top: var(--top);
+    right: var(--right);
+    bottom: var(--bottom);
+    left: var(--left);
+    transform: rotateY(var(--rotateY)) rotateX(var(--rotateX)) translateZ(var(--translateZ));
+}
+
+.boxes .box>view:nth-child(1) {
+    --top: 0;
+    --left: 0;
+}
+
+.boxes .box>view:nth-child(2) {
+    --background: #ec7d0f;
+    --right: 0;
+    --rotateY: 90deg;
+}
+
+.boxes .box>view:nth-child(3) {
+    --background: #f09840;
+    --rotateX: -90deg;
+}
+
+.boxes .box>view:nth-child(4) {
+    --background: #DBE3F4;
+    --top: 0;
+    --left: 0;
+    --translateZ: calc(var(--size) * 3 * -1);
+}
+
+@-webkit-keyframes box1 {
+
+    0%,
+    50% {
+        transform: translate(100%, 0);
+    }
+
+    100% {
+        transform: translate(200%, 0);
+    }
+}
+
+@keyframes box1 {
+
+    0%,
+    50% {
+        transform: translate(100%, 0);
+    }
+
+    100% {
+        transform: translate(200%, 0);
+    }
+}
+
+@-webkit-keyframes box2 {
+    0% {
+        transform: translate(0, 100%);
+    }
+
+    50% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(100%, 0);
+    }
+}
+
+@keyframes box2 {
+    0% {
+        transform: translate(0, 100%);
+    }
+
+    50% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(100%, 0);
+    }
+}
+
+@-webkit-keyframes box3 {
+
+    0%,
+    50% {
+        transform: translate(100%, 100%);
+    }
+
+    100% {
+        transform: translate(0, 100%);
+    }
+}
+
+@keyframes box3 {
+
+    0%,
+    50% {
+        transform: translate(100%, 100%);
+    }
+
+    100% {
+        transform: translate(0, 100%);
+    }
+}
+
+@-webkit-keyframes box4 {
+    0% {
+        transform: translate(200%, 0);
+    }
+
+    50% {
+        transform: translate(200%, 100%);
+    }
+
+    100% {
+        transform: translate(100%, 100%);
+    }
+}
+
+@keyframes box4 {
+    0% {
+        transform: translate(200%, 0);
+    }
+
+    50% {
+        transform: translate(200%, 100%);
+    }
+
+    100% {
+        transform: translate(100%, 100%);
+    }
+}
+
 
 /* 社区信息 */
 .community-header {
@@ -209,6 +582,12 @@ onMounted(async () => {
     font-size: 16px;
     font-weight: bold;
     margin: 5px 0;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
 }
 
 .post-abstract {
@@ -248,12 +627,24 @@ onMounted(async () => {
 .qa-question {
     font-size: 16px;
     font-weight: bold;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
 }
 
 .qa-answer {
     font-size: 14px;
     color: #666;
     margin-top: 5px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
 }
 
 /* 发布按钮 */

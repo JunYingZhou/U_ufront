@@ -41,8 +41,15 @@ onUnmounted(() => {
     </view>
     <!-- 搜索条 -->
     <view class="search">
-      <text class="icon-search">请输入内容</text>
-      <text class="icon-scan"></text>
+      <!-- <text class="icon-search">请输入内容</text> -->
+      <!-- <text class="icon-scan"></text> -->
+
+      <input
+      class="search-input"
+      type="text"
+      placeholder="请输入内容"
+      placeholder-style="color: #fff;"
+    />
     </view>
   </view>
 </template>

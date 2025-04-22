@@ -77,10 +77,15 @@ let categoryNameList = ref<any>([]);
 let categoryName = ref('');
 let loading = ref(false);
 let articleId = ref<number>(0);
+const isCommunity = ref<any>(0)
+const communityId = ref<any>(0)
 
 
-onLoad(async () => {
+onLoad(async (options: any) => {
     // Fetch category list
+    console.log('options', options);
+    options.from == 1 ? isCommunity.value = 1 : '';
+    communityId.value = options.communityId
     let res: any = await getCategoryList();
     console.log('分类类别', res);
     if (res.msg === "ok") {
@@ -239,7 +244,16 @@ const submitArticle = async () => {
         });
         return
     }
-    let res: any = await addArticle(article.value);
+
+    const data = {
+        ...article.value,
+        isCommunity: isCommunity.value,
+        communityId: Number(communityId.value),
+    }
+
+    console.log('提交的文章123:', data);
+    // let res: any = await addArticle(article.value);
+    let res: any = await addArticle(data);
     console.log('返回数据', res.data.split('.')[1]);
     if (res.msg === 'ok') {
         articleId.value = res.data.split('.')[1]
@@ -250,7 +264,7 @@ const submitArticle = async () => {
             icon: 'success'
         })
         setTimeout(() => {
-            uni.switchTab({ url: '/pages/index/index' })
+            isCommunity ? uni.redirectTo({ url: `/pages/communityDetail/index?communityId=${communityId.value}` }) : uni.switchTab({ url: '/pages/index/index' })
         }, 1000)
     } else {
         uni.showToast({

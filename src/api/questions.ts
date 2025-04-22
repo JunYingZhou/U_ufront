@@ -16,3 +16,11 @@ export const queryAllCommunity = () => {
     method: 'get',
   })
 }
+
+export const addQuestion = (data: any) => {
+  return request({
+    url: '/News/community/addQuestions',
+    method: 'post',
+    data: data,
+  })
+}

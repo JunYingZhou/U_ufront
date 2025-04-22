@@ -10,7 +10,7 @@
       <view class="chat-container">
         <!-- 左侧聊天列表 -->
         <view class="chat-list" v-show="showSidebar">
-          <view class="chat-item" v-for="(item, index) in chatList" :key="index" @click="selectChat(item.chatId)">
+          <view class="chat-item" v-for="(item, index) in chatList" :key="index" @click="selectChat(item)">
             <image class="avatar" :src="item.avatar" mode="aspectFill"></image>
             <view class="info">
               <text class="name">{{ getCategoryName(item.categoryId) }}</text>
@@ -89,7 +89,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { useCategoryStore } from "@/stores";
 import { useUserStore } from '@/stores';
-import { getChatInfoByUserId, getAdvise } from "@/api/chat";
+import { getChatInfoByUserId, getAdvise, addUserChatResult } from "@/api/chat";
 const categoryStore = useCategoryStore();
 const userStore = useUserStore();
 let isStartChat = ref<boolean>(false)
@@ -122,6 +122,9 @@ const questionList = ref<any>([])
 const QuestionContentMap = reactive(new Map())
 
 const loading = ref(false)
+
+
+let currentCategory = reactive<any>({});
 
 
 // 当前聊天消息
@@ -175,6 +178,7 @@ async function selectCategory(item: any) {
   // 这里可以根据分类ID跳转到对应的页面
   console.log('选择分类：', item, '--->', userStore.getUserId);
   // 获取对应分类的聊天数据
+  currentCategory = item;
   let res: any = await getChatInfoByUserId(uni.getStorageSync("userId"), item.categoryId)
   console.log('聊天数据', res)
   chatList.value = res.data
@@ -190,9 +194,13 @@ function toggleSidebar() {
 }
 
 // 选择聊天
-function selectChat(id: number) {
-  currentChatId.value = id;
+function selectChat(item: any) {
+  // currentChatId.value = id;
   // 这里可以添加加载对应聊天记录的逻辑
+  console.log('选择聊天：', item.chatAdvise);
+  // 跳转分析页
+  uni.redirectTo({ url: '/pages/AbilityAnalysis/index?advise='+ encodeURIComponent(item.chatAdvise)})
+
 }
 
 // 发送消息
@@ -272,19 +280,52 @@ const sendMessage = async() => {
     loading.value = true;
     // 发送message给后端，并生成回答
     const mapToObject = Object.fromEntries(QuestionContentMap);
+    // 去掉第一个键值对
+    delete mapToObject['您好，请回复立即开始'];
     console.log('对话内容', mapToObject)
     const mapData = QuestionContentMap;
     const data = {
-      "questionCategory": getCategoryName(currentChatId.value),
+      "questionCategory": currentCategory.categoryName,
       "questionContent": mapToObject
     }
     let res: any = await getAdvise(data)
     loading.value = false;
     console.log('回答', res)
-    uni.navigateTo({ url: '/pages/AbilityAnalysis/index?advise='+ encodeURIComponent(JSON.stringify(res.data))})
+    extractAdviseOption(res.data);
+    // 将回答存入数据库中
+    const data2 = {
+      "userId": uni.getStorageSync("userId"),
+      'categoryId': currentCategory.categoryId,
+      'chatAdvise': res.data,
+      'chatMessagesJson': mapToObject,
+      'createTime': new Date()
+    }
+    addUserChatResult({
+      "userId": uni.getStorageSync("userId"),
+      'categoryId': currentCategory.categoryId,
+      'chatAdvise': JSON.stringify(res.data),
+      'chatMessagesJson': JSON.stringify(mapToObject),
+    }).then((res: any) => {
+      console.log('回答存入数据库', res)
+    })
+    uni.redirectTo({ url: '/pages/AbilityAnalysis/index?advise='+ encodeURIComponent(JSON.stringify(res.data))})
     inputMsg.value = ''
     return;
   }
+}
+
+function extractAdviseOption(markdown: string) {
+    const jsonMatch = markdown.match(/```markdown\n([\s\S]*?)\n```/);
+    if (jsonMatch && jsonMatch[1]) {
+        try {
+            console.log("提取的 markdown 字符串:", jsonMatch);
+            return JSON.parse(jsonMatch[1]);
+        } catch (e) {
+            console.error("JSON 解析错误:", e);
+            return {};
+        }
+    }
+    return {};
 }
 
 const fillMessageList = () => {
