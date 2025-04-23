@@ -170,7 +170,7 @@
 
 <script setup>
 import { ref, watch, nextTick, onMounted, onUpdated, onUnmounted, reactive } from "vue";
-import { queryAllCommentByArticle, queryCommentByUserId } from "@/api/comment.ts";
+import { queryAllAnswersByQuestion, queryAnswersByUserId } from "@/api/answers";
 import { useUserStore } from "@/stores";
 const userStore = useUserStore();
 import { onLaunch, onShow, onHide, onLoad } from "@dcloudio/uni-app";
@@ -183,7 +183,7 @@ const props = defineProps({
     type: String,
     default: "操作不可逆，如果评论下有子评论，也将被一并删除，确认？",
   },
-  articleId: {
+  questionId: {
     type: Number,
     default: 0,
   },
@@ -214,9 +214,9 @@ watch(
 );
 
 onMounted(() => {
-  console.log("文章id", props.articleId);
-  uni.$on("fetchDataOperation", (data) => {
-    console.log("fetchDataOperation", data);
+  console.log("文章id", props.questionId);
+  uni.$on("fetchDataAnswersOperation", (data) => {
+    console.log("fetchDataAnswersOperation", data);
     if (data === 1) {
       init();
     }
@@ -227,7 +227,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  uni.$off("fetchDataOperation", handleFetchDataOperation);
+  uni.$off("fetchDataAnswersOperation", handleFetchDataOperation);
   personalList = [];
 });
 
@@ -250,13 +250,13 @@ function setHasLike(comments, personalList) {
 }
 
 async function init(newVal) {
-    // let res = await queryAllCommentByArticle(props.articleId);
-    console.log('文章id', props.articleId);
-    let res = await Promise.all([queryAllCommentByArticle(props.articleId), queryCommentByUserId(uni.getStorageSync('userId'), props.articleId)])
+    // let res = await queryAllCommentByArticle(props.questionId);
+    console.log('文章id', props.questionId);
+    let res = await Promise.all([queryAllAnswersByQuestion(props.questionId), queryAnswersByUserId(uni.getStorageSync('userId'), props.questionId)])
     console.log("评论res -->", res);
     // 对res[1]进行去重
     if (res[1] && res[1].msg == 'ok') {
-        const userIdTemp = uni.getStorageSync('userId');
+        const userIdTemp = uni.getStorageSync('userId')
         personalList = res[1].data.filter((item) => {
             if (item.userId === userIdTemp) {
                 return true;
@@ -279,9 +279,9 @@ async function init(newVal) {
 
 
 // async function init(newVal) {
-//   // let res = await queryAllCommentByArticle(props.articleId);
-//   console.log('文章id', props.articleId);
-//   let res = await Promise.all([queryAllCommentByArticle(props.articleId), queryCommentByUserId(userStore.getUserId, props.articleId)])
+//   // let res = await queryAllCommentByArticle(props.questionId);
+//   console.log('文章id', props.questionId);
+//   let res = await Promise.all([queryAllCommentByArticle(props.questionId), queryCommentByUserId(userStore.getUserId, props.questionId)])
 //   console.log("评论res -->", res);
 //   // 对res[1]进行去重
 //   if (res[1] && res[1].msg == 'ok') {

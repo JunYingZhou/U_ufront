@@ -20,6 +20,8 @@ export const getArticleList = (id: number) => {
 }
 
 
+
+
 export const getArticleListByTitle = (title: string) => {
   return request({
     url: `/anti/article/listByTitle/${title}`,
@@ -32,10 +34,12 @@ export const getArticleListByTitle = (title: string) => {
  */
 export const getArticleById = (id: number) => {
   return request({
-    url: `/news/article/${id}`,
+    url: `/anti/article/${id}`,
     method: 'get',
   })
 }
+
+
 
 /**
  * 获取文章列表

@@ -77,7 +77,7 @@ const closePopup = () => {
 
 const commentLike = (e: any) => {
     console.log('评论点赞', e)
-    let userId = userStore.getUserId;
+    let userId = uni.getStorageSync('userId');
     // request api
     addCommentLike(e, userId, props.articleId)
         .then((res: any) => {
@@ -98,7 +98,7 @@ const commentLike = (e: any) => {
 const add = async (e: any) => {
     let data = {
         articleId: props.articleId,
-        userId: userStore.getUserId,
+        userId: uni.getStorageSync('userId'),
         commentContent: e.content,
         commentRootId: e.pId || 0,
         commentLikeCount: 0,
@@ -178,7 +178,7 @@ const likeStar = async (type: string) => {
         //     content: "你已收藏了该文章",
         //     // showCancel: false
         // })
-        let res: any = await delArticleLikeStarStatus(`${props.articleId},${userStore.getUserId}`, type);
+        let res: any = await delArticleLikeStarStatus(`${props.articleId},${uni.getStorageSync('userId')}`, type);
         console.log('@@@', res);
         // 刷新页面
         if (type === 'like') {
@@ -202,7 +202,7 @@ const likeStar = async (type: string) => {
     }
     // insert into db
     let insertStatus = type === 'like' ?
-        await insertArticleLikeStarStatus(`${props.articleId},${userStore.getUserId}`, type) : await insertArticleLikeStarStatus(`${props.articleId},${userStore.getUserId}`, type);
+        await insertArticleLikeStarStatus(`${props.articleId},${uni.getStorageSync('userId')}`, type) : await insertArticleLikeStarStatus(`${props.articleId},${uni.getStorageSync('userId')}`, type);
     if (insertStatus && type) {
         type === 'like' ?
             like.value = true :

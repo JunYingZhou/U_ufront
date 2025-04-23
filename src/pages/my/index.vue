@@ -27,7 +27,7 @@ onPullDownRefresh(() => {
 
 onLoad(() => {
   // 获取我的信息
-  userId.value = userStore.getUserId;
+  userId.value = uni.getStorageSync('userId')
   getUserInfoF();
 })
 

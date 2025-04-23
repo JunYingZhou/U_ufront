@@ -89,3 +89,10 @@ export const updateAvatar = (params: any) => {
     data: params,
   })
 }
+
+export const getArticleStarListByUser = (id: number, type: string) => {
+  return request({
+    url: `/anti/article/getArticleStarListByUser/${id}/${type}`,
+    method: 'get',
+  })
+}

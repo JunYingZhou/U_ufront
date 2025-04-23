@@ -14,7 +14,7 @@
     <view class="swiper-container" v-if="contentImageUrl.length > 0">
       <swiper class="swiper" indicator-dots autoplay circular>
         <swiper-item v-for="(item, index) in contentImageUrl" :key="index">
-          <image :src="item.artFileUrl" mode="widthFix" lazy-load />
+          <image :src="item.artFileUrl" mode='heightFix' lazy-load />
         </swiper-item>
       </swiper>
     </view>
@@ -112,17 +112,18 @@ const fetchArticleFile = async (articleId: number) => {
 };
 
 onLoad(async (options: any) => {
-  // if (options.articleId && typeof options.articleId === "number") {
-    console.log("原始的文章数据:", options.articleId);
+  try {
+     // if (options.articleId && typeof options.articleId === "number") {
+      console.log("原始的文章数据:", options.articleId);
     // const obj = await parseArticleData(options.article);
     const obj: any = await getArticleById(options.articleId || 1);
-    console.log("解析后的文章数据123:", obj);
+    console.log("解析后的文章数据123:", obj, obj.data.id);
     if (obj) {
-      Object.assign(articleObj, obj.data);
+      Object.assign(articleObj, obj.data[0]);
       console.log("解析后的文章数据123123:", articleObj);
       let promiseList = [
-        fetchArticleUrl(obj.data.id),
-        fetchArticleFile(obj.data.id),
+        fetchArticleUrl(obj.data[0].id),
+        fetchArticleFile(obj.data[0].id),
       ];
       let res: any[] = await Promise.all(promiseList);
       if (res) {
@@ -136,6 +137,10 @@ onLoad(async (options: any) => {
   // } else {
   //   console.error("无效的文章数据:", options.article);
   // }
+  } catch (error) {
+    console.error("11111 时出错:", error);
+  }
+ 
 });
 
 // 新增：在组件挂载后获取 foot 组件的高度
@@ -168,9 +173,10 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .container {
-  // 背景渐变效果
-  background: linear-gradient(to bottom, #f9f9f9, #e9e9e9);
+  background: linear-gradient(to bottom, #ffffff, #f2f2f2);
   min-height: 100vh;
+  padding-bottom: 120rpx; // 避免底部被 foot 遮挡
+  font-family: 'PingFang SC', 'Helvetica Neue', sans-serif;
 }
 
 .container-loading {
@@ -194,28 +200,49 @@ onUnmounted(() => {
 }
 
 .title {
-  font-size: 44rpx;
-  font-weight: bold;
-  margin-bottom: 20rpx;
-  // 标题阴影效果
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  font-size: 46rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .abstract {
-  font-size: 32rpx;
-  color: #777;
-  margin-bottom: 30rpx;
+  font-size: 30rpx;
+  color: #999;
+  font-style: italic;
+  margin-bottom: 20rpx;
+  border-left: 6rpx solid #ec7d0f;
+  padding-left: 16rpx;
 }
 
-.article-content {
+.content {
   font-size: 30rpx;
-  line-height: 1.6;
+  line-height: 1.8;
   color: #444;
+  letter-spacing: 1rpx;
+  padding-bottom: 30rpx;
 }
 
 .swiper-container {
-  width: 100%;
-  height: 500rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin: 20rpx 30rpx;
+  box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.article-content {
+  animation: fadeIn 0.6s ease-in-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(100rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .swiper {

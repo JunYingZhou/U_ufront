@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { getArticleList } from '@/api/article'; // 你的API请求
+import { getArticleStarListByUser } from '@/api/user'; // 你的API请求
 import { onPullDownRefresh } from '@dcloudio/uni-app';
 import { onMounted, reactive, ref } from 'vue';
 
@@ -50,7 +50,7 @@ onPullDownRefresh(() => {
 const getList = async (refresh = false) => {
     try {
         loading.value = true;
-        const res: any = await getArticleList(page.value, pageSize); // 调用API
+        const res: any = await getArticleStarListByUser(uni.getStorageSync('userId'), 'star'); // 调用API
         const newData = res.data || [];
 
         if (refresh) {
@@ -124,6 +124,11 @@ const loadMore = () => {
     font-weight: bold;
     color: #333;
     margin-bottom: 5px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 限制最大显示 1 行 */
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
 }
 
 /* 文章摘要 */

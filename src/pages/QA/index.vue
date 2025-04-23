@@ -14,7 +14,7 @@
 
         <!-- 评论区域 -->
         <view class="comment-section">
-            <comment ref="hbComment" @like="commentLike" @add="add" :articleId="question.id"></comment>
+            <answers ref="hbComment" @like="commentLike" @add="add" :questionId="question.id"></answers>
         </view>
     </view>
 </template>
@@ -23,8 +23,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
-import comment from '@/common/components/comment/index.vue'
+// import comment from '@/common/components/comment/index.vue'
+import answers from '@/pages/QA/components/answers/index.vue'
+import { addAnswers, addAnswersLike } from "@/api/answers";
 
+let fetchData = ref<number>(0)
 
 const question = ref<any>(null); // 问题
 
@@ -37,12 +40,63 @@ onLoad((options: any) => {
     }
 });
 
-const commentLike = (data: any) => {
-    console.log('commentLike', data);
+const commentLike = (e: any) => {
+    console.log('评论点赞', e)
+    let userId = uni.getStorageSync('userId');
+    // request api
+    addAnswersLike(e, userId, question.value.id)
+        .then((res: any) => {
+            console.log('评论点赞结果', res);
+            // insert into db
+            // fetchData.value = 1;
+            uni.$emit('fetchDataAnswersOperation', 1);
+            uni.showToast({
+                title: "点赞成功",
+                duration: 1000,
+            })
+        })
+        .catch((error: any) => {
+            console.error('评论点赞失败', error);
+        });
 }
 
-const add = (data: any) => {
-    console.log('add', data); 
+const add = async (e: any) => {
+    let data = {
+        questionId: question.value.id, // 替换为实际的questionId
+        userId: uni.getStorageSync('userId'), // 替换为实际的user,
+        commentContent: e.content,
+        commentRootId: e.pId || 0,
+        commentLikeCount: 0,
+        commentType: 0,
+        toUserId: e.toUserId || 0,
+    }
+    console.log("评论数据", data, e);
+    // 判断是否有pId, 有pId则是回复
+    if (e.pId) {
+        // 回复
+        let param = Object.assign({}, data);
+        param.commentType = 1;
+        console.log("回复", param);
+        let res = await addAnswers(param);
+        console.log("回复结果", res);
+        // fetchData.value = 1;
+        uni.$emit('fetchDataOperation', 1);
+
+    } else {
+        // 评论
+        let param = Object.assign({}, data);
+        param.commentType = 0;
+        console.log("评论", param);
+        let res = await addAnswers(param);
+        console.log("评论结果", res);
+        // fetchData.value = 1;     
+        uni.$emit('fetchDataOperation', 1);
+
+    }
+    // request api
+    // insert into db
+    fetchData.value = 0;
+
 }
 
 
@@ -113,7 +167,6 @@ const parseArticleData = (articleStr: string) => {
 .comment-section {
     background: #ffffff;
     border-radius: 16rpx;
-    padding: 32rpx;
     box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.04);
 }
 </style>

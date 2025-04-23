@@ -68,7 +68,7 @@ const article = ref({
     articleMain: "小程序文章1",
     categoryId: null,
     isOfficial: 0,
-    userId: userStore.getUserId
+    userId: uni.getStorageSync('userId')
 });
 let coverImage = ref(null);
 let contentImages = reactive<any>([]);
@@ -78,14 +78,16 @@ let categoryName = ref('');
 let loading = ref(false);
 let articleId = ref<number>(0);
 const isCommunity = ref<any>(0)
-const communityId = ref<any>(0)
+const communityId = ref<any>(-1)
 
 
 onLoad(async (options: any) => {
     // Fetch category list
     console.log('options', options);
-    options.from == 1 ? isCommunity.value = 1 : '';
-    communityId.value = options.communityId
+    options.from == 1 ? isCommunity.value = 1 : 0;
+    if(options.communityId) {
+        communityId.value = options.communityId
+    }
     let res: any = await getCategoryList();
     console.log('分类类别', res);
     if (res.msg === "ok") {
@@ -264,7 +266,7 @@ const submitArticle = async () => {
             icon: 'success'
         })
         setTimeout(() => {
-            isCommunity ? uni.redirectTo({ url: `/pages/communityDetail/index?communityId=${communityId.value}` }) : uni.switchTab({ url: '/pages/index/index' })
+            isCommunity.value !== 0 ? uni.redirectTo({ url: `/pages/communityDetail/index?communityId=${communityId.value}` }) : uni.switchTab({ url: '/pages/index/index' })
         }, 1000)
     } else {
         uni.showToast({
