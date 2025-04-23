@@ -19,6 +19,14 @@ export const getArticleList = (id: number) => {
   })
 }
 
+
+export const getArticleListByTitle = (title: string) => {
+  return request({
+    url: `/anti/article/listByTitle/${title}`,
+    method: 'get',
+  })
+}
+
 /**
  * 获取文章详情
  */
@@ -47,6 +55,31 @@ export const getArticleLikeCount = (id: number) => {
 }
 
 /**
+ * 获取文章列表
+ */
+export const getArticleByUserId = (userId: number) => {
+  return request({
+    url: `/anti/article/getArticleByUserId/${userId}`,
+    method: 'get',
+  })
+}
+
+export const getArticleLikeCountByUserId = (id: number) => {
+  return request({
+    url: `/anti/article/getArticleLikeCountByUserId/${id}/${'like'}`,
+    method: 'get',
+  })
+}
+
+export const getQuestionByUserId = (id: number) => {
+  return request({
+    url: `/anti/article/getQuestionByUserId/${id}`,
+    method: 'get',
+  })
+}
+
+
+/**
  * 新增文章列表
  */
 export const addArticle = (params: any) => {
@@ -63,6 +96,13 @@ export const addArticle = (params: any) => {
 export const getArticleLikeStarStatus = (queryIds: any, type: any) =>{
   return request({
     url: `/anti/article/getArticleLikeStarStatus/${queryIds}/${type}`,
+    method: 'get',
+  })
+}
+
+export const delArticleLikeStarStatus = (queryIds: any, type: any) =>{
+  return request({
+    url: `/anti/article/delArticleLikeStarStatus/${queryIds}/${type}`,
     method: 'get',
   })
 }

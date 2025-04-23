@@ -9,13 +9,13 @@
 <template>
   <view class="container">
     <view class="header">
-      <CustomNavbar></CustomNavbar>
+      <CustomNavbar @updateLIstByTitle="getListBySearch"></CustomNavbar>
       <CategoryTab @updateList="handleUpdateList"></CategoryTab>
     </view>
     <!-- <view class="content" :style="{ paddingTop: safeAreaInsets?.top + 'px' }"> -->
     <view class="content">
       <!-- 设置瀑布流屏幕列表 -->
-      <WaterFallList :categoryId="categoryId"></WaterFallList>
+      <WaterFallList :categoryId="categoryId" :title="title"></WaterFallList>
     </view>
   </view>
 </template>
@@ -31,6 +31,7 @@ import WaterFallList from '@/pages/index/components/WaterFallList.vue';
 
 // const router = useRouter()
 let categoryId = ref<number>(100)
+const title = ref<string>('')
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -58,11 +59,16 @@ onLoad(() => {
   });
 })
 
+
 const handleUpdateList = (id: number) => {
   console.log('更新列表', id);
   categoryId.value = id
 }
 
+const getListBySearch = (title1: any) => {
+  console.log('搜索', title1); // 确认函数被调用 
+  title.value = title1
+}
 const goToLogin = () => {
   console.log('跳转到我的'); // 确认函数被调用
   uni.switchTab({

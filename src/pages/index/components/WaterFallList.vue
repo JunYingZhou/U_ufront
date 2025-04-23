@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
-import { getArticleList } from '@/api/article';
+import { getArticleList, getArticleListByTitle } from '@/api/article';
 import { onPullDownRefresh } from '@dcloudio/uni-app';
 import WaterFallListItem from './WaterFallListItem.vue';
 
@@ -24,6 +24,7 @@ const flowData = reactive<FlowData>({
 
 const props = defineProps<{
   categoryId: number;
+  title: string;
 }>();
 
 // watch
@@ -35,7 +36,17 @@ watch(
       console.log('categoryId changed:', newVal);
       getList(newVal);
     }
-  }
+  },
+);
+
+watch(
+  () => props.title,
+  (newVal, oldVal) => {
+    if (newVal!== oldVal) {
+      console.log('categoryId changed:', newVal);
+      getListByTitle(newVal);
+    }
+  },
 );
 
 // 页面挂载时获取数据
@@ -64,6 +75,22 @@ const getList = async (categoryId: number) => {
     console.error('Failed to fetch article list:', error);
   }
 };
+
+const getListByTitle = async (title: string) => {
+  try {
+    if(!title) {
+      getList(props.categoryId);
+      return;
+    }
+    console.log('Fetching article list...', title);
+    const res: any = await getArticleListByTitle(title);
+    flowData.list = res.data || []; 
+    console.log('Article List:', flowData.list);
+    initData(); // 调用 initData 函数进行分组初始化
+  } catch (error) {
+    console.error('Failed to fetch article list:', error); 
+  } 
+}
 
 // 初始化每一列的数据
 for (let i = 1; i <= flowData.column; i++) {

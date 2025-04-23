@@ -7,13 +7,14 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%A
 -->
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
-
+import { ref, onMounted, onUnmounted, watch, defineEmits} from 'vue'
+import { getArticleListByTitle } from '@/api/article'
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
 const textList = ['提高反诈意识，铸就安全生活','构建反诈社会，守卫安全生活', '全民反诈，从你我开始']
 const currentIndex = ref(0)
 let timer: number | null = null
+const debounceTimer = ref<any | null>(null)
 
 const startRotation = () => {
   timer = setInterval(() => {
@@ -21,9 +22,43 @@ const startRotation = () => {
   }, 3000)
 }
 
+
+const emits = defineEmits<{
+  (event: "updateLIstByTitle", title: string): void;
+}>();
+
+
 onMounted(() => {
   startRotation()
 })
+
+const handleInput = (e: any) => {
+  if (debounceTimer.value) {
+    clearTimeout(debounceTimer.value)
+  }
+  
+  debounceTimer.value = setTimeout(() => {
+    // 实际要执行的逻辑，例如搜索请求
+    console.log('防抖后的输入内容:', e.detail.value)
+    // getArticleListByTitle(e.detail.value).then((res: any) => {
+      // c?onsole.log(res)
+      emits("updateLIstByTitle", e.detail.value)
+    // })
+    // 这里可以添加搜索接口调用
+  }, 700)
+}
+
+const handleConfirm = () => {
+  console.log('点击了确认')
+}
+
+const handleFocus = () => {
+  console.log('输入框获得焦点')
+}
+
+const handleBlur = () => {
+  console.log('输入框失去焦点')
+}
 
 onUnmounted(() => {
   if (timer) {
@@ -41,14 +76,15 @@ onUnmounted(() => {
     </view>
     <!-- 搜索条 -->
     <view class="search">
-      <!-- <text class="icon-search">请输入内容</text> -->
-      <!-- <text class="icon-scan"></text> -->
-
       <input
       class="search-input"
       type="text"
       placeholder="请输入内容"
       placeholder-style="color: #fff;"
+      @input="handleInput"  
+      @confirm="handleConfirm"  
+      @focus="handleFocus"   
+      @blur="handleBlur" 
     />
     </view>
   </view>
