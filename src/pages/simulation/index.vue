@@ -161,14 +161,21 @@ const initWs = () => {
 }
 
 const parseRepoDO = (raw: string) => {
-  const obj: Record<string, any> = {};
-  const inner = raw.substring(raw.indexOf('(') + 1, raw.lastIndexOf(')')); // 去掉 RepoDO(...)
-  const pairs = inner.split(/,\s*(?=\w+=)/); // 按 key=value 分割（逗号后跟key=）
+  // 移除外层RepoDO标识和首尾括号
+  const cleanStr = raw.replace(/^RepoDO\(|\)$/g, '');
+  const obj: Record<string, string> = {};
 
-  pairs.forEach(pair => {
-    const [key, ...valueParts] = pair.split('=');
-    obj[key] = valueParts.join('=').trim();
-  });
+  // 使用正则匹配键值对（支持包含空格的value）
+  const regex = /(\w+)=([^,)]*)(?=,|$)/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(cleanStr)) !== null) {
+    const key = match[1];
+    let value = match[2].trim();
+    
+    // 处理null值情况
+    obj[key] = value === 'null' ? '' : value;
+  }
 
   return obj;
 };
@@ -182,6 +189,13 @@ async function selectCategory(item: any) {
   let res: any = await getChatInfoByUserId(uni.getStorageSync("userId"), item.categoryId)
   console.log('聊天数据', res)
   chatList.value = res.data
+  if(chatList.value.length > 0) {
+    showSidebar.value = true; 
+    console.log('聊天记录', chatList.value[0])
+  }else {
+    showSidebar.value = false;
+    console.log('没有聊天记录')
+  }
   res.msg === "ok" ? isStartChat.value = true : "";
   uni.sendSocketMessage({
     data: item.categoryId

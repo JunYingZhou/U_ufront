@@ -34,18 +34,18 @@
                         <image class="cover-image-url" :src="image" mode="aspectFill" />
                         <view class="delete-btn" @click.stop="removeContentImage(index)">×</view>
                     </view>
-                    <view class="cover-image" @click="handleContentImagesUpload" v-if="contentImages.length < 5">
+                    <view class="cover-image" @click="handleContentImagesUpload" v-if="contentImages.length < 3">
                         <image class="cover-image-url" src="http://117.72.78.239:9000/zjyminio/upload.png" mode="aspectFill" />
                     </view>
                 </view>
-                <view class="image-limit-tip" v-if="contentImages.length >= 5">最多上传5张图片</view>
+                <view class="image-limit-tip" v-if="contentImages.length >= 3">最多上传3张图片</view>
             </view>
 
             <view class="form-group">
                 <label for="category">文章分类</label>
                 <picker mode="selector" :range="categoryNameList" @change="handleCategoryChange">
                     <view class="picker">
-                        {{ article.categoryId ? categoryName : "请选择分类" }}
+                        {{ article.categoryId === 0 || article.categoryId ? categoryName : "请选择分类" }}
                     </view>
                 </picker>
             </view>
@@ -59,16 +59,18 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { getCategoryList } from '@/api/category';
-import { addArticle } from '@/api/article'
 import { onLoad } from '@dcloudio/uni-app';
+import { updateArticle, getArticleById, getArticleContentImages } from '@/api/article';
 import { useUserStore } from "@/stores";
 
 const userStore = useUserStore();
-const article = ref({
-    articleTitle: "小程序文章1",
-    articleAbstract: "小程序文章1",
-    articleMain: "小程序文章1",
+let article = reactive({
+    articleTitle: "",
+    articleAbstract: "",
+    articleMain: "",
+    articleCoverUrl: '',
     categoryId: null,
+    coverImage: '',
     isOfficial: 0,
     userId: uni.getStorageSync('userId')
 });
@@ -79,24 +81,47 @@ let categoryNameList = ref<string[]>([]);
 let categoryName = ref('');
 let loading = ref(false);
 let articleId = ref<number>(0);
-const isCommunity = ref<number>(0);
-const communityId = ref<number>(-1);
+const isCommunity = ref<any>(0);
+const communityId = ref<any>(-1);
 
 onLoad(async (options: any) => {
     console.log('options', options);
-    isCommunity.value = options.from == 1 ? 1 : 0;
     if (options.communityId) {
-        communityId.value = Number(options.communityId);
+        communityId.value = options.communityId;
     }
 
+    // Load category list
     let res: any = await getCategoryList();
     console.log('分类类别', res);
     if (res.msg === "ok") {
         categoryList.value = res.data;
         categoryNameList.value = res.data.map((item: any) => item.categoryName);
-        console.log('分类名称列表', categoryNameList.value);
-        loading.value = true;
     }
+
+    // Load article details
+    if (options.articleId) {
+        await getArticleById(options.articleId).then((res: any) => {
+            console.log('文章详情', res);
+            if (res.data) {
+                Object.assign(article, res.data[0]);
+                if (article?.articleCoverUrl) {
+                    coverImage.value = article.articleCoverUrl;
+                }
+                const matchedCategory = categoryList.value.find((item: any) => item.categoryId === article.categoryId);
+                if (matchedCategory) {
+                    categoryName.value = matchedCategory.categoryName;
+                }
+            }
+        });
+
+        await getArticleContentImages(options.articleId).then((res: any) => {
+            console.log('文章内容图片', res);
+            contentImages.value = res.data.map((item: any) => item.artFileUrl);
+        });
+        console.log('article ---->', article);
+    }
+
+    loading.value = true;
 });
 
 // Handle cover image upload
@@ -108,7 +133,7 @@ const handleCoverImageUpload = () => {
         success(res) {
             const filePath = res.tempFiles[0].tempFilePath;
             console.log('选择的媒体文件路径:', filePath);
-            article.value.coverImage = filePath;
+            article.coverImage = filePath;
             coverImage.value = filePath;
         }
     });
@@ -116,10 +141,10 @@ const handleCoverImageUpload = () => {
 
 // Handle content images upload
 const handleContentImagesUpload = () => {
-    if (contentImages.value.length >= 5) {
+    if (contentImages.value.length >= 3) {
         uni.showModal({
             icon: 'none',
-            title: '最多上传5张图片',
+            title: '最多上传3张图片',
         });
         return;
     }
@@ -216,6 +241,7 @@ const handleContentImagesUploadF = (articleId: any,filePaths: any) => {
         });
     })
 }
+
 // Remove content image
 const removeContentImage = (index: number) => {
     contentImages.value = contentImages.value.filter((_, i) => i !== index);
@@ -223,21 +249,21 @@ const removeContentImage = (index: number) => {
 
 // Remove cover image
 const removeCoverImage = () => {
-    coverImage.value = null;
-    article.value.coverImage = '';
+    coverImage.value = '';
+    article.coverImage = '';
 };
 
 // Handle category change
 const handleCategoryChange = (event: any) => {
     const index = event.detail.value;
-    article.value.categoryId = categoryList.value[index].categoryId;
+    article.categoryId = categoryList.value[index].categoryId;
     categoryName.value = categoryNameList.value[index];
-    console.log('选择的分类:', article.value.categoryId);
+    console.log('选择的分类:', article.categoryId);
 };
 
 // Submit article
 const submitArticle = async () => {
-    if (!(article.value.articleTitle && article.value.articleAbstract && article.value.articleMain && article.value.categoryId)) {
+    if (!(article.articleTitle && article.articleAbstract && article.articleMain && article.categoryId)) {
         uni.showModal({
             icon: 'none',
             title: '请填写完整数据',
@@ -246,13 +272,13 @@ const submitArticle = async () => {
     }
 
     const data = {
-        ...article.value,
+        ...article,
         isCommunity: isCommunity.value,
         communityId: Number(communityId.value),
     };
 
     console.log('提交的文章:', data);
-    let res: any = await addArticle(data);
+    let res: any = await updateArticle(data);
     console.log('返回数据', res.data.split('.')[1]);
     if (res.msg === 'ok') {
         articleId.value = res.data.split('.')[1];
@@ -263,7 +289,7 @@ const submitArticle = async () => {
             handleContentImagesUploadF(articleId.value, contentImages.value);
         }
         uni.showToast({
-            title: '发布成功',
+            title: '修改成功',
             icon: 'success'
         });
         setTimeout(() => {
@@ -323,7 +349,7 @@ input[type="text"] {
     transition: border-color 0.3s;
 
     &:focus {
-        border-color: #d4a429;
+        border-color: #ce8019;
         outline: none;
     }
 }
@@ -338,7 +364,7 @@ textarea {
     transition: border-color 0.3s;
 
     &:focus {
-        border-color: #c17c1b;
+        border-color: #ce881f;
         outline: none;
     }
 }
@@ -394,7 +420,7 @@ textarea {
     transition: border-color 0.3s;
 
     &:hover {
-        border-color: #d08733;
+        border-color: #cc851a;
     }
 
     .cover-image-url {
@@ -430,14 +456,14 @@ textarea {
     transition: border-color 0.3s;
 
     &:hover {
-        border-color: #dc871e;
+        border-color: #c97720;
     }
 }
 
 .submit-btn {
     width: 100%;
     height: 100rpx;
-    background: linear-gradient(90deg, #d9841d, #d4944b);
+    background: linear-gradient(90deg, #e59217, #d57f38);
     color: white;
     font-size: 32rpx;
     font-weight: 500;

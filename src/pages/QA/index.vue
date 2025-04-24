@@ -14,7 +14,7 @@
 
         <!-- 评论区域 -->
         <view class="comment-section">
-            <answers ref="hbComment" @like="commentLike" @add="add" :questionId="question.id"></answers>
+            <answers ref="hbComment" @like="commentLike" @del="del" @add="add" :questionId="question.id"></answers>
         </view>
     </view>
 </template>
@@ -25,7 +25,7 @@ import { ref } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 // import comment from '@/common/components/comment/index.vue'
 import answers from '@/pages/QA/components/answers/index.vue'
-import { addAnswers, addAnswersLike } from "@/api/answers";
+import { addAnswers, addAnswersLike, delAnswers } from "@/api/answers";
 
 let fetchData = ref<number>(0)
 
@@ -60,6 +60,19 @@ const commentLike = (e: any) => {
         });
 }
 
+const del = async(e: any) => {
+    console.log('删除评论', e) 
+    const res = await delAnswers(e.commentId)
+    if (res) {
+        console.log('删除评论成功', res);
+        uni.showToast({
+            title: "删除成功",
+            duration: 1000,
+        })
+        uni.$emit('fetchDataAnswersOperation', 1); 
+    }
+}
+
 const add = async (e: any) => {
     let data = {
         questionId: question.value.id, // 替换为实际的questionId
@@ -80,7 +93,7 @@ const add = async (e: any) => {
         let res = await addAnswers(param);
         console.log("回复结果", res);
         // fetchData.value = 1;
-        uni.$emit('fetchDataOperation', 1);
+        uni.$emit('fetchDataAnswersOperation', 1);
 
     } else {
         // 评论
@@ -90,7 +103,7 @@ const add = async (e: any) => {
         let res = await addAnswers(param);
         console.log("评论结果", res);
         // fetchData.value = 1;     
-        uni.$emit('fetchDataOperation', 1);
+        uni.$emit('fetchDataAnswersOperation', 1);
 
     }
     // request api

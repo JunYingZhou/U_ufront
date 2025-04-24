@@ -47,6 +47,14 @@ export const addAnswersLike = (commentId: any, userId: any, articleId: any) => {
   }) 
 }
 
+
+export const delAnswers = (commentId: any) => {
+  return request({
+    url: `/anti/comment/delAnswers/${commentId}`,
+    method: 'get',
+  }) 
+}
+
 export const queryAnswersByUserId = (userId: any, articleId: any) => {
   return request({
     url: `/anti/comment/queryAnswersByUserId/${userId}/${articleId}`,

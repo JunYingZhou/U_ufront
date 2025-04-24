@@ -47,6 +47,14 @@
         <view v-if="activeTab === 'qa'">
             <view class="qa-list">
                 <view class="qa-item" v-for="qa in questions" :key="qa.id">
+                    <view class="operation" @click.stop="showOperation(qa.id)">
+                        ...
+                        <!-- 添加操作菜单 -->
+                        <view v-if="showOperationIndex === qa.id" class="operation-menu">
+                            <text class="menu-item" @click.stop="handleModify(qa)">修改</text>
+                            <text class="menu-item" @click.stop="handleDelete(qa)">删除</text>
+                        </view>
+                    </view>
                     <text class="qa-question" @click="toQDetail(qa)">Q: {{ qa.questionsTitle }}</text>
                     <text class="qa-answer">A: {{ qa.questionsTitle }}</text>
                 </view>
@@ -110,10 +118,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import { queryCommunityList } from '@/api/community'
 import { addQuestion } from '@/api/questions'
-import { getArticleLikeCount, getArticleCommentCount, getArticleByUserId, getArticleLikeCountByUserId, getQuestionByUserId } from '@/api/article'
+import { getArticleLikeCount, getArticleCommentCount, getArticleByUserId, getArticleLikeCountByUserId, getQuestionByUserId, delArticle, updateQuestions } from '@/api/article'
+import { delQuestions } from '@/api/questions'
 import { onLoad } from "@dcloudio/uni-app";
 // import 
 // 当前选项卡
@@ -122,6 +131,9 @@ const activeTab = ref<"posts" | "qa">("posts");
 // 帖子数据（假数据）
 const posts = ref<any>([
 ]);
+
+let qaData = reactive<any>(null)
+let questionId = ref<any>(null)
 
 const communityId = ref<any>(0) // 社区详细数据
 // 社区问答数据（假数据）
@@ -150,13 +162,47 @@ const showOperation = (index: number) => {
 
 const handleModify = (post: any) => {
     console.log('修改帖子', post)
+    if(activeTab.value === 'qa') {
+        isShowQuestionModal.value = true;
+        questionId.value = post.id
+        questionInput.value = post.questionsTitle
+        // const data = {
+        //     ...post,
+        //    questionsTitle: questionInput.value,
+        //    questionsContent: questionInput.value,
+        //    questionsState: 0,
+        // }
+        // console.log('修改问题', data)
+        // qaData = data
+    }else {
+        uni.navigateTo({ url: `/pages/ownPost/components/edit/index?articleId=${post.id}` })
+    }
     showOperationIndex.value = null
     // 这里添加跳转到编辑页面的逻辑
 }
 
-const handleDelete = (post: any) => {
+const handleDelete = async(post: any) => {
     console.log('删除帖子', post)
-    showOperationIndex.value = null
+    uni.showModal({
+        title: '提示',
+        content: '确定要删除该帖子吗？',
+        success: async(res) => {
+            if (res.confirm) {
+                // 调用删除接口
+                if(activeTab.value == 'posts' ) {
+                    await delArticle(post.id);
+                }else {
+                    // 这里添加删除接口调用 
+                    await delQuestions(post.id);
+                }
+                showOperationIndex.value = null
+                init();
+                // 刷新帖子列表
+                // await fetchPosts();
+            }
+        }
+    });
+
     // 这里添加删除接口调用
 }
 
@@ -200,9 +246,12 @@ const submitQuestion = async() => {
         return;
     }
     // 这里添加实际提交逻辑
+    // await updateQuestions(qaData)
+    await init()
     console.log('提交问题:', questionInput.value);
 
-    let res: any = await addQuestion({
+    let res: any = await updateQuestions({
+        id: questionId.value,
         communityId: communityId.value,
         questionsContent: questionInput.value,
         questionsTitle: questionInput.value,
@@ -212,7 +261,9 @@ const submitQuestion = async() => {
         isDel: 0,
     })
 
-    console.log('提交问题', res)
+    questionId.value = null
+
+    console.log('提交问题 ----------------------> ', res)
 
     await init()
 
@@ -686,6 +737,7 @@ const postArticle = () => {
 }
 
 .qa-item {
+    position: relative;
     display: flex;
     flex-direction: column;
     background: #fff;

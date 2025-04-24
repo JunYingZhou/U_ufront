@@ -19,7 +19,7 @@
                 <view class="close">
                     <text class="close-text" @click="closePopup">关闭</text>
                 </view>
-                <comment ref="hbComment" @like="commentLike" @add="add" :articleId="props.articleId"></comment>
+                <comment ref="hbComment" @like="commentLike" @del="del" @add="add" :articleId="props.articleId"></comment>
             </view>
         </view>
     </view>
@@ -29,7 +29,7 @@
 import { ref, onMounted, watch } from 'vue';
 import comment from '@/common/components/comment/index.vue'
 import { getArticleLikeStarStatus, insertArticleLikeStarStatus, delArticleLikeStarStatus } from "@/api/article";
-import { addComment, addCommentLike } from "@/api/comment";
+import { addComment, addCommentLike, delComment } from "@/api/comment";
 let showPopup = ref(false);
 import { useUserStore } from "@/stores";
 
@@ -70,6 +70,19 @@ onMounted(() => {
     console.log("foot", props.articleId);
     initLikeStar();
 })
+
+const del = async(e: any) => {
+    console.log('删除评论', e) 
+    const res = await delComment(e.commentId)
+    if (res) {
+        console.log('删除评论成功', res);
+        uni.showToast({
+            title: "删除成功",
+            duration: 1000,
+        })
+        uni.$emit('fetchDataOperation', 1); 
+    }
+}
 
 const closePopup = () => {
     showPopup.value = false;

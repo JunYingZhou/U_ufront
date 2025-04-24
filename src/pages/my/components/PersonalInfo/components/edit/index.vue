@@ -149,14 +149,17 @@ const getUserInfoF = async() => {
   console.log('userInfo -->',userStore.getUserInfo)
 }
 
-const onSubmit = () => {
+const onSubmit = async() => {
     // 这里可以添加保存表单数据的逻辑
     console.log('表单数据:', userInfo);
     // 调用 API 保存数据
-    UpdateUser(userInfo.id, userInfo).then(res => {
+    await UpdateUser(userInfo.id, userInfo).then(res => {
         console.log('保存成功', res);
         getUserInfoF();
         uni.$emit('refreshPersonalInfo', 1)
+    })
+    uni.switchTab({
+        url: '/pages/my/index', 
     })
     // 示例：await saveUserInfo(userInfo);
     uni.showToast({

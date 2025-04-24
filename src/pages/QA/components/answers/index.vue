@@ -75,7 +75,7 @@
       item.userId
     )
     ">回复</view>
-              <view class="foot-btn" v-if="false" @click="confirmDelete(item.commentId)">删除</view>
+              <view class="foot-btn" v-if="item.isDel" @click="confirmDelete(item.commentId, item.questionId)">删除</view>
             </view>
             <!-- 父评论体-end -->
             <!-- 子评论列表-start -->
@@ -126,7 +126,7 @@
     )
     ">
                       回复</view>
-                    <view class="foot-btn" v-if="each.owner" @click="confirmDelete(each.commentId)">删除
+                    <view class="foot-btn" v-if="each.isDel" @click="confirmDelete(each.commentId, item.questionId)">删除
                     </view>
                   </view>
                 </view>
@@ -249,6 +249,20 @@ function setHasLike(comments, personalList) {
     });
 }
 
+function setShowDel(comments) {
+    const userId = uni.getStorageSync('userId')
+    comments.forEach((item) => {
+        if (item.userId === userId) {
+          item.isDel = true;
+        }
+
+        // 如果有子评论，递归调用 setHasLike 函数
+        if (item?.children && item.children.length > 0) {
+          setShowDel(item.children);
+        }
+    });
+}
+
 async function init(newVal) {
     // let res = await queryAllCommentByArticle(props.questionId);
     console.log('文章id', props.questionId);
@@ -258,7 +272,10 @@ async function init(newVal) {
     if (res[1] && res[1].msg == 'ok') {
         const userIdTemp = uni.getStorageSync('userId')
         personalList = res[1].data.filter((item) => {
+          console.log("userIdTemp", userIdTemp, item.userId);
             if (item.userId === userIdTemp) {
+                item.isDel = true
+                console.log('item', item)
                 return true;
             }
             return false;
@@ -268,6 +285,19 @@ async function init(newVal) {
     if (res[0].msg == "ok") {
         res[0].data.comment = getTree(res[0].data.comment);
         commentData.value = res[0].data;
+        console.log("commentData", commentData.value);
+        const userIdTemp = uni.getStorageSync('userId')
+        // commentData.value.comment = res[0].data.comment.filter((item) => {
+        //   console.log("userIdTemp", userIdTemp, item.userId);
+        //     if (item.userId === userIdTemp) {
+        //         item.isDel = true
+        //         console.log('item', item)
+        //     }
+        // });
+        // console.log("personalList", personalList);
+
+        // 使用递归函数设置 hasLike 属性
+        setShowDel(commentData.value.comment);
 
         // 使用递归函数设置 hasLike 属性
         setHasLike(commentData.value.comment, personalList);
@@ -357,14 +387,18 @@ function getTree(data) {
   return result;
 }
 
-function confirmDelete(commentId) {
+function confirmDelete(commentId, questionId) {
+  const data = {
+    commentId: commentId,
+    questionId: questionId,
+  }
   uni.showModal({
     title: "警告",
     content: props.deleteTip,
     confirmText: "确认删除",
     success: (res) => {
       if (res.confirm) {
-        emit("del", commentId);
+        emit("del", data);
       }
     },
   });

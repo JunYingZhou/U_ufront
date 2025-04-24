@@ -17,6 +17,13 @@ export const queryAllCommunity = () => {
   })
 }
 
+export const delQuestions = (questionId: any) => {
+  return request({
+    url: `/anti/article/delQuestions/${questionId}`,
+    method: 'get',
+  })
+}
+
 export const addQuestion = (data: any) => {
   return request({
     url: '/News/community/addQuestions',

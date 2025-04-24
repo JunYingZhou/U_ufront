@@ -118,6 +118,40 @@ export const getArticleCommentCount = (queryIds: any) =>{
   })
 }
 
+
+export const delArticle = (articleId: any) =>{
+  return request({
+    url: `/anti/article/delArticle/${articleId}`,
+    method: 'get',
+  })
+}
+
+export const getArticleContentImages = (articleId: any) =>{
+  return request({
+    url: `/anti/article/getArticleContentImages/${articleId}`,
+    method: 'get',
+  })
+}
+
+export const updateArticle = (data: any) =>{
+  return request({
+    url: `/anti/article/upArticle`,
+    method: 'post',
+    data: data,
+  })
+}
+
+
+export const updateQuestions = (data: any) =>{
+  return request({
+    url: `/anti/article/updateQuestions`,
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 /**
  * 插入数据到文章点赞收藏表
  */

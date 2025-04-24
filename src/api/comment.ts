@@ -40,6 +40,13 @@ export const queryLikeCommentByArticle = (articleId: any, userId: any) => {
   })
 }
 
+export const delComment = (commentId: any) => {
+  return request({
+    url: `/anti/comment/delComment/${commentId}`,
+    method: 'get',
+  }) 
+}
+
 export const addCommentLike = (commentId: any, userId: any, articleId: any) => {
   return request({
     url: `/anti/comment/addCommentLike/${commentId}/${userId}/${articleId}`,
