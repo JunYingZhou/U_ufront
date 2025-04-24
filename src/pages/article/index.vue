@@ -12,9 +12,16 @@
     <!-- <image class="cover-image" :src="articleObj.articleCoverUrl" mode="widthFix" lazy-load /> -->
     <!-- 图片轮播 -->
     <view class="swiper-container" v-if="contentImageUrl.length > 0">
-      <swiper class="swiper" indicator-dots autoplay circular>
+      <swiper
+        class="swiper"
+        :indicator-dots="true"
+        :autoplay="true"
+        :circular="true"
+        :interval="5000"
+        :duration="500"
+      >
         <swiper-item v-for="(item, index) in contentImageUrl" :key="index">
-          <image :src="item.artFileUrl" mode='heightFix' lazy-load />
+          <image :src="item.artFileUrl" mode="aspectFill" lazy-load class="swiper-image" />
         </swiper-item>
       </swiper>
     </view>
@@ -225,12 +232,48 @@ onUnmounted(() => {
 }
 
 .swiper-container {
+  margin: 30rpx;
   border-radius: 20rpx;
   overflow: hidden;
-  margin: 20rpx 30rpx;
-  box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.1);
+  background: #fff;
 }
 
+.swiper {
+  width: 100%;
+  height: 500rpx;
+}
+
+.swiper-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+swiper::after {
+  content: "";
+  position: absolute;
+  bottom: 20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12rpx;
+}
+
+swiper .wx-swiper-dot {
+  width: 16rpx;
+  height: 16rpx;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+swiper .wx-swiper-dot-active {
+  width: 24rpx;
+  background: #007aff;
+  border-radius: 12rpx;
+}
 .article-content {
   animation: fadeIn 0.6s ease-in-out;
 }

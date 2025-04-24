@@ -47,7 +47,7 @@
             <view class="qa-list">
                 <view class="qa-item" v-for="qa in questions" :key="qa.id">
                     <text class="qa-question" @click="toQDetail(qa)">Q: {{ qa.questionsTitle }}</text>
-                    <text class="qa-answer">A: {{ qa.questionsTitle }}</text>
+                    <text class="qa-answer">A: {{ "进入查看" }}</text>
                 </view>
             </view>
         </view>
@@ -156,8 +156,8 @@ const init = async() => {
         element.articleLikeCount = res[0].data
         element.comments = res[1].data
     }
-    questions.value = res.data.questionsRespList || []
-    posts.value = res.data.articleList || []
+    questions.value = res.data.questionsRespList.reverse() || []
+    posts.value = res.data.articleList.reverse() || []
     loading.value = false 
    }
 }

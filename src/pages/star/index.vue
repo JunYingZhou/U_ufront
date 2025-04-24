@@ -51,7 +51,7 @@ const getList = async (refresh = false) => {
     try {
         loading.value = true;
         const res: any = await getArticleStarListByUser(uni.getStorageSync('userId'), 'star'); // 调用API
-        const newData = res.data || [];
+        const newData = res.data.reverse() || [];
 
         if (refresh) {
             list.length = 0;

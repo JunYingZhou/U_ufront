@@ -56,7 +56,7 @@
                         </view>
                     </view>
                     <text class="qa-question" @click="toQDetail(qa)">Q: {{ qa.questionsTitle }}</text>
-                    <text class="qa-answer">A: {{ qa.questionsTitle }}</text>
+                    <text class="qa-answer">A: {{ "进入查看" }}</text>
                 </view>
             </view>
         </view>
@@ -222,8 +222,8 @@ const init = async() => {
         element.articleLikeCount = res[0].data
         element.comments = res[1].data
     }
-    questions.value = res[1].data || []
-    posts.value = res[0].data || []
+    questions.value = res[1].data.reverse() || []
+    posts.value = res[0].data.reverse() || []
     loading.value = false 
    }
 }

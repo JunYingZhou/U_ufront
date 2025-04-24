@@ -75,7 +75,7 @@ let article = reactive({
     userId: uni.getStorageSync('userId')
 });
 let coverImage = ref<string | null>(null);
-let contentImages = ref<string[]>([]);
+let contentImages = ref<any[]>([]);
 let categoryList = ref<any[]>([]);
 let categoryNameList = ref<string[]>([]);
 let categoryName = ref('');
@@ -96,6 +96,8 @@ onLoad(async (options: any) => {
     if (res.msg === "ok") {
         categoryList.value = res.data;
         categoryNameList.value = res.data.map((item: any) => item.categoryName);
+        categoryNameList.value.unshift('请选择分类'); // 添加默认选项
+
     }
 
     // Load article details
@@ -256,7 +258,8 @@ const removeCoverImage = () => {
 // Handle category change
 const handleCategoryChange = (event: any) => {
     const index = event.detail.value;
-    article.categoryId = categoryList.value[index].categoryId;
+    console.log('选择的分类索引:', index, categoryList.value, categoryList.value[index - 1].categoryId);
+    article.categoryId = categoryList.value[index - 1].categoryId;
     categoryName.value = categoryNameList.value[index];
     console.log('选择的分类:', article.categoryId);
 };

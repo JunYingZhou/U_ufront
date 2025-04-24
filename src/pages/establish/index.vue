@@ -94,6 +94,7 @@ onLoad(async (options: any) => {
     if (res.msg === "ok") {
         categoryList.value = res.data;
         categoryNameList.value = res.data.map((item: any) => item.categoryName);
+        categoryNameList.value.unshift('请选择分类'); // 添加默认选项
         console.log('分类名称列表', categoryNameList.value);
         loading.value = true;
     }
@@ -263,7 +264,7 @@ const submitArticle = async () => {
             handleContentImagesUploadF(articleId.value, contentImages.value);
         }
         uni.showToast({
-            title: '发布成功',
+            title: '发布成功，待审核',
             icon: 'success'
         });
         setTimeout(() => {
